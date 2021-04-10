@@ -1,22 +1,16 @@
 import React, { useEffect, useState } from "react";
 import chroma from "chroma-js";
-import { Bar } from "react-chartjs-2";
-import { ChartData, ChartDataSets } from "chart.js";
+import { Benchmark, getBenchmarkData } from "./api";
+import { ChartDataSets } from "chart.js";
 import randomColor from "randomcolor";
 
-import { Benchmark, getBenchmarkData } from "./api";
-import FrameworkSelector, {
-  SelectOption,
-} from "./components/FrameworkSelector";
+import DataTable from "./components/DataTable";
+import BarChart from "./components/BarChart";
 
-type BenchmarkDataSet = Benchmark & ChartDataSets & { color: string };
+export type BenchmarkDataSet = Benchmark & ChartDataSets & { color: string };
 
 function App() {
   const [benchmarks, setBenchmarks] = useState<BenchmarkDataSet[]>([]);
-  const [data, setData] = useState<ChartData>({
-    labels: ["Speed (64)", "Speed (256)", "Speed (512)"],
-    datasets: [],
-  });
 
   // Fetch data
   useEffect(() => {
@@ -42,30 +36,15 @@ function App() {
     })();
   }, []);
 
-  // FrameworkSelector onChange handler
-  const onChange = (selectedOptions: SelectOption[]) => {
-    // Get benchmark data from selected frameworks id
-    const filteredBenchmark = selectedOptions.map(
-      (option) => benchmarks.find((b) => b.id === option.value)!
-    );
-
-    setData({ ...data, datasets: filteredBenchmark });
-  };
-
   return (
-    <div className="container pt-lg">
-      <FrameworkSelector
-        options={benchmarks.map((b) => ({
-          value: b.id,
-          label: `${b.language} - ${b.framework.name} (${b.framework.version})`,
-          color: b.color,
-        }))}
-        onChange={onChange}
-      />
+    <div className="container">
+      <h1 className="text-center">Chart</h1>
+      <BarChart benchmarks={benchmarks} />
 
-      <div className="pt-lg">
-        <Bar data={data} height={100} />
-      </div>
+      <hr />
+
+      <h1 className="text-center">DataTable</h1>
+      <DataTable benchmarks={benchmarks} />
     </div>
   );
 }
