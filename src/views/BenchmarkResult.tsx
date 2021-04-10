@@ -76,6 +76,8 @@ function Table({ benchmarks }: Props) {
               )
             : benchmarks
         }
+        noHeader
+        className="pt-md"
       />
     </div>
   );

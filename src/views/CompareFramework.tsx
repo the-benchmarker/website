@@ -40,7 +40,7 @@ function BarChart({ benchmarks }: Props) {
         onChange={onChange}
       />
 
-      <div className="pt-lg">
+      <div className="pt-md">
         <Bar data={data} height={100} />
       </div>
     </div>
