@@ -88,7 +88,6 @@ function FrameworkSelector({ options, onChange }: Props) {
 
   return (
     <Select
-      closeMenuOnSelect={false}
       isMulti
       onChange={onOptionsChange}
       styles={styles as any}
