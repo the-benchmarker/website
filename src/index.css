@@ -6,6 +6,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.text-center {
+  text-align: center !important;
+}
+
+hr {
+  border: 0; 
+  border-top: 1px solid lightgray;
+  margin: 46px 0px;
+}
+
 .container {
   width: 100%;
   margin-right: auto;
