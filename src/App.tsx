@@ -6,8 +6,8 @@ import randomColor from "randomcolor";
 import { BrowserRouter as Router } from "react-router-dom";
 import CacheRoute, { CacheSwitch } from "react-router-cache-route";
 
-import FrameworksTable from "./views/FrameworksTable";
-import FrameworksChart from "./views/FrameworksChart";
+import BenchmarkResult from "./views/BenchmarkResult";
+import CompareFrameworks from "./views/CompareFramework";
 import AppHeader from "./components/AppHeader";
 
 export type BenchmarkDataSet = Benchmark & ChartDataSets & { color: string };
@@ -47,10 +47,10 @@ function App() {
         <div className="container">
           <CacheSwitch>
             <CacheRoute exact path={["/", "/result"]}>
-              <FrameworksTable benchmarks={benchmarks} />
+              <BenchmarkResult benchmarks={benchmarks} />
             </CacheRoute>
             <CacheRoute path="/compare">
-              <FrameworksChart benchmarks={benchmarks} />
+              <CompareFrameworks benchmarks={benchmarks} />
             </CacheRoute>
           </CacheSwitch>
         </div>
