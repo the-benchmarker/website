@@ -12,3 +12,10 @@ Built with:
 - [react-chartjs-2](https://github.com/reactchartjs/react-chartjs-2)
 - [react-select](https://github.com/jedwatson/react-select)
 - [react-data-table-component](https://github.com/jbetancur/react-data-table-component)
+
+---
+
+TODO:
+- [ ] Show latest result date (from `Results-2021-04-03`)
+- [ ] Add [react-router](https://github.com/ReactTraining/react-router) and separate Table and Chart into its own page
+- [ ] Sync selected options to URL query parameters so data can be shared easily from URL (e.g. `https://web-frameworks-benchmark.netlify.app/chart?s=express,aspnetcore`)
