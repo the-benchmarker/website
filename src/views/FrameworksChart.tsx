@@ -2,7 +2,9 @@ import { useState } from "react";
 import { ChartData } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
-import FrameworkSelector, { SelectOption } from "./FrameworkSelector";
+import FrameworkSelector, {
+  SelectOption,
+} from "../components/FrameworkSelector";
 import { BenchmarkDataSet } from "../App";
 
 interface Props {
@@ -27,6 +29,8 @@ function BarChart({ benchmarks }: Props) {
 
   return (
     <div>
+      <h3 className="text-center">Chart</h3>
+
       <FrameworkSelector
         options={benchmarks.map((b) => ({
           value: b.id,

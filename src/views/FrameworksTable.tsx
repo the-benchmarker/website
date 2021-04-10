@@ -56,6 +56,8 @@ function Table({ benchmarks }: Props) {
 
   return (
     <div>
+      <h3 className="text-center">DataTable</h3>
+
       <Select
         isMulti
         onChange={onChange}

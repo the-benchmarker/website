@@ -3,9 +3,12 @@ import chroma from "chroma-js";
 import { Benchmark, getBenchmarkData } from "./api";
 import { ChartDataSets } from "chart.js";
 import randomColor from "randomcolor";
+import { BrowserRouter as Router } from "react-router-dom";
+import CacheRoute, { CacheSwitch } from "react-router-cache-route";
 
-import DataTable from "./components/DataTable";
-import BarChart from "./components/BarChart";
+import FrameworksTable from "./views/FrameworksTable";
+import FrameworksChart from "./views/FrameworksChart";
+import NavBar from "./components/NavBar";
 
 export type BenchmarkDataSet = Benchmark & ChartDataSets & { color: string };
 
@@ -37,15 +40,26 @@ function App() {
   }, []);
 
   return (
-    <div className="container">
-      <h1 className="text-center">Chart</h1>
-      <BarChart benchmarks={benchmarks} />
+    <Router>
+      <div>
+        <div className="text-center">
+          <h1>Web Frameworks Benchmark</h1>
+          <NavBar />
+          <hr />
+        </div>
 
-      <hr />
-
-      <h1 className="text-center">DataTable</h1>
-      <DataTable benchmarks={benchmarks} />
-    </div>
+        <div className="container">
+          <CacheSwitch>
+            <CacheRoute exact path={["/", "/table"]}>
+              <FrameworksTable benchmarks={benchmarks} />
+            </CacheRoute>
+            <CacheRoute path="/chart">
+              <FrameworksChart benchmarks={benchmarks} />
+            </CacheRoute>
+          </CacheSwitch>
+        </div>
+      </div>
+    </Router>
   );
 }
 
