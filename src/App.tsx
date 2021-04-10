@@ -8,7 +8,7 @@ import CacheRoute, { CacheSwitch } from "react-router-cache-route";
 
 import FrameworksTable from "./views/FrameworksTable";
 import FrameworksChart from "./views/FrameworksChart";
-import NavBar from "./components/NavBar";
+import AppHeader from "./components/AppHeader";
 
 export type BenchmarkDataSet = Benchmark & ChartDataSets & { color: string };
 
@@ -42,22 +42,21 @@ function App() {
   return (
     <Router>
       <div>
-        <div className="text-center">
-          <h1>Web Frameworks Benchmark</h1>
-          <NavBar />
-          <hr />
-        </div>
+        <AppHeader />
 
         <div className="container">
           <CacheSwitch>
-            <CacheRoute exact path={["/", "/table"]}>
+            <CacheRoute exact path={["/", "/result"]}>
               <FrameworksTable benchmarks={benchmarks} />
             </CacheRoute>
-            <CacheRoute path="/chart">
+            <CacheRoute path="/compare">
               <FrameworksChart benchmarks={benchmarks} />
             </CacheRoute>
           </CacheSwitch>
         </div>
+
+        {/* Bottom Space */}
+        <div style={{ height: "25vh" }}></div>
       </div>
     </Router>
   );

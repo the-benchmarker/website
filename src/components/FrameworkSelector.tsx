@@ -89,6 +89,7 @@ function FrameworkSelector({ options, onChange }: Props) {
   return (
     <Select
       isMulti
+      placeholder="Select Frameworks..."
       onChange={onOptionsChange}
       styles={styles as any}
       options={options}

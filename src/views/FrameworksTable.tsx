@@ -56,11 +56,12 @@ function Table({ benchmarks }: Props) {
 
   return (
     <div>
-      <h3 className="text-center">DataTable</h3>
+      <h3 className="text-center">Benchmark Result</h3>
 
       <Select
         isMulti
         onChange={onChange}
+        placeholder="Filter Languages..."
         options={[
           ...new Set(benchmarks.map((b) => b.language)),
         ].map((lang) => ({ value: lang, label: lang }))}

@@ -10,10 +10,25 @@ body {
   text-align: center !important;
 }
 
+a {
+  color: #1c73bb;
+}
+
+.nav-links {
+  list-style-type: none;
+  padding: 0; 
+}
+
+.nav-links li {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+
 hr {
   border: 0; 
   border-top: 1px solid lightgray;
-  margin: 46px 0px;
+  margin: 24px 0px;
 }
 
 h1 {

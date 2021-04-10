@@ -29,7 +29,7 @@ function BarChart({ benchmarks }: Props) {
 
   return (
     <div>
-      <h3 className="text-center">Chart</h3>
+      <h3 className="text-center">Compare Frameworks</h3>
 
       <FrameworkSelector
         options={benchmarks.map((b) => ({
