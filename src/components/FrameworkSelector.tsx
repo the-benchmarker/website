@@ -91,7 +91,11 @@ function FrameworkSelector({ options, onChange, defaultValue = [] }: Props) {
     <Select
       key={defaultValue.join(",")}
       isMulti
-      defaultValue={options.filter((o) => defaultValue.includes(o.value))}
+      defaultValue={defaultValue.reduce((filtered, id) => {
+        const option = options.find((o) => o.value === id);
+        if (option) filtered.push(option);
+        return filtered;
+      }, [] as SelectOption[])}
       placeholder="Select Frameworks..."
       onChange={onOptionsChange}
       styles={styles as any}

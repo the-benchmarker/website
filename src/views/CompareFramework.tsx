@@ -31,9 +31,11 @@ function BarChart({ benchmarks }: Props) {
     if (!frameworks) return;
 
     // Find benchmark by framework name
-    const filteredBenchmark = benchmarks.filter(({ framework }) =>
-      frameworks.includes(framework.name)
-    );
+    const filteredBenchmark = frameworks.reduce((filtered, name) => {
+      const benchmark = benchmarks.find((b) => b.framework.name === name);
+      if (benchmark) filtered.push(benchmark);
+      return filtered;
+    }, [] as BenchmarkDataSet[]);
 
     setDefaultFrameworkIds(filteredBenchmark.map((b) => b.id));
     setData({ ...data, datasets: filteredBenchmark });
