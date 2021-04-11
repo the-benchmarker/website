@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Select from "react-select";
 import DataTable, { IDataTableColumn } from "react-data-table-component";
+import { isMobile } from "react-device-detect";
 import { Benchmark } from "../api";
 
 const columns: IDataTableColumn<Benchmark>[] = [
@@ -54,9 +55,15 @@ function Table({ benchmarks }: Props) {
     setSelectedLanguages(data);
   };
 
+  const scrollToTitle = () => {
+    document.getElementById("title")!.scrollIntoView();
+  };
+
   return (
     <div>
-      <h3 className="text-center">Benchmark Result</h3>
+      <h3 className="text-center" id="title">
+        Benchmark Result
+      </h3>
 
       <Select
         isMulti
@@ -69,6 +76,11 @@ function Table({ benchmarks }: Props) {
 
       <DataTable
         columns={columns}
+        pagination={isMobile}
+        paginationPerPage={25}
+        paginationRowsPerPageOptions={[25, 50, 100]}
+        paginationComponentOptions={{ selectAllRowsItem: true }}
+        onChangePage={scrollToTitle}
         data={
           selectedLanguages.length
             ? benchmarks.filter((b) =>
