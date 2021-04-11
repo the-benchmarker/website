@@ -28,6 +28,7 @@ export interface SelectOption {
 interface Props {
   options: SelectOption[];
   onChange: (options: SelectOption[]) => void;
+  defaultValue?: number[];
 }
 
 /** Styles for <Select> */
@@ -81,14 +82,16 @@ const styles: Styles<SelectOption> = {
   }),
 };
 
-function FrameworkSelector({ options, onChange }: Props) {
+function FrameworkSelector({ options, onChange, defaultValue = [] }: Props) {
   const onOptionsChange = (data: any) => {
     onChange(data);
   };
 
   return (
     <Select
+      key={defaultValue.join(",")}
       isMulti
+      defaultValue={options.filter((o) => defaultValue.includes(o.value))}
       placeholder="Select Frameworks..."
       onChange={onOptionsChange}
       styles={styles as any}
