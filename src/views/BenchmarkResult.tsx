@@ -15,7 +15,10 @@ const columns: IDataTableColumn<Benchmark>[] = [
     selector: ({ framework }) => framework.name,
     cell: ({ framework }) => (
       <div>
-        <a href={framework.link}>{framework.name}</a> ({framework.version})
+        <a href={framework.link} target="_blank" rel="noreferrer">
+          {framework.name}
+        </a>{" "}
+        ({framework.version})
       </div>
     ),
     sortable: true,
