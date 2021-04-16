@@ -68,7 +68,7 @@ function BarChart({ benchmarks }: Props) {
           labels: level.map((l) => `Concurrency ${l}`),
           datasets: filteredBenchmark.map((b) => ({
             ...b,
-            data: [b.level64[key], b.level256[key], b.level512[key]],
+            data: level.map((l) => b[`level${l}` as const][key]),
           })),
         },
       };
