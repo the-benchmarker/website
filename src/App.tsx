@@ -14,6 +14,7 @@ export type BenchmarkDataSet = Benchmark & ChartDataSets & { color: string };
 
 function App() {
   const [benchmarks, setBenchmarks] = useState<BenchmarkDataSet[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch data
   useEffect(() => {
@@ -40,28 +41,33 @@ function App() {
       });
 
       setBenchmarks(data);
+      setIsLoading(false);
     })();
   }, []);
 
   return (
     <Router>
-      <div>
-        <AppHeader />
+      {!isLoading ? (
+        <div>
+          <AppHeader />
 
-        <div className="container">
-          <CacheSwitch>
-            <CacheRoute exact path={["/", "/result"]}>
-              <BenchmarkResult benchmarks={benchmarks} />
-            </CacheRoute>
-            <CacheRoute path="/compare">
-              <CompareFrameworks benchmarks={benchmarks} />
-            </CacheRoute>
-          </CacheSwitch>
+          <div className="container">
+            <CacheSwitch>
+              <CacheRoute exact path={["/", "/result"]}>
+                <BenchmarkResult benchmarks={benchmarks} />
+              </CacheRoute>
+              <CacheRoute path="/compare">
+                <CompareFrameworks benchmarks={benchmarks} />
+              </CacheRoute>
+            </CacheSwitch>
+          </div>
+
+          {/* Bottom Space */}
+          <div style={{ height: "25vh" }}></div>
         </div>
-
-        {/* Bottom Space */}
-        <div style={{ height: "25vh" }}></div>
-      </div>
+      ) : (
+        <div className="loader">Loading...</div>
+      )}
     </Router>
   );
 }
