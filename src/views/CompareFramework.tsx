@@ -122,8 +122,8 @@ function BarChart({ benchmarks }: Props) {
       />
 
       <div className="pt-md">
-        {charts.map((c) => (
-          <div className="pb-lg">
+        {charts.map((c, i) => (
+          <div className="pb-lg" key={i}>
             <h4 className="text-center"> {c.title} </h4>
             <Bar data={c.chartData} height={100} />
           </div>
