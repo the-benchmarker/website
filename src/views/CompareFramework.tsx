@@ -1,23 +1,45 @@
 import { useEffect, useState } from "react";
 import { ChartData } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { useHistory } from "react-router-dom";
 
 import FrameworkSelector, {
   SelectOption,
 } from "../components/FrameworkSelector";
 import { BenchmarkDataSet } from "../App";
-import { useHistory } from "react-router-dom";
 import useQuery from "../hooks/useQuery";
+import { MetricTypes } from "../api";
 
 interface Props {
   benchmarks: BenchmarkDataSet[];
 }
 
+const level = [64, 256, 512] as const;
+
+// Data included to compare, each on their own chart (for each 64, 256, and 512)
+const comparedData: { key: MetricTypes; title: string }[] = [
+  {
+    key: "totalRequests",
+    title: "Total Request in 15 seconds",
+  },
+  {
+    key: "averageLatency",
+    title: "Average Latency (ms)",
+  },
+  {
+    key: "minimimLatency",
+    title: "Minimum Latency (ms)",
+  },
+  {
+    key: "maximumLatency",
+    title: "Maximum Latency (ms)",
+  },
+];
+
+type ChartsData = { title: string; chartData: ChartData }[];
+
 function BarChart({ benchmarks }: Props) {
-  const [data, setData] = useState<ChartData>({
-    labels: ["Speed (64)", "Speed (256)", "Speed (512)"],
-    datasets: [],
-  });
+  const [charts, setCharts] = useState<ChartsData>([]);
   const [defaultFrameworkIds, setDefaultFrameworkIds] = useState<number[]>([]);
   const history = useHistory();
   const query = useQuery();
@@ -32,13 +54,27 @@ function BarChart({ benchmarks }: Props) {
 
     // Find benchmark by framework name
     const filteredBenchmark = frameworks.reduce((filtered, name) => {
-      const benchmark = benchmarks.find((b) => b.framework.name === name);
+      const benchmark = benchmarks.find((b) => b.framework.label === name);
       if (benchmark) filtered.push(benchmark);
       return filtered;
     }, [] as BenchmarkDataSet[]);
 
     setDefaultFrameworkIds(filteredBenchmark.map((b) => b.id));
-    setData({ ...data, datasets: filteredBenchmark });
+
+    const charts: ChartsData = comparedData.map(({ title, key }) => {
+      return {
+        title,
+        chartData: {
+          labels: level.map((l) => `Concurrency ${l}`),
+          datasets: filteredBenchmark.map((b) => ({
+            ...b,
+            data: [b.level64[key], b.level256[key], b.level512[key]],
+          })),
+        },
+      };
+    });
+
+    setCharts(charts);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [benchmarks]);
 
@@ -50,10 +86,25 @@ function BarChart({ benchmarks }: Props) {
     );
 
     // Set query parameter
-    const frameworks = filteredBenchmark.map((b) => b.framework.name).join(",");
+    const frameworks = filteredBenchmark
+      .map((b) => b.framework.label)
+      .join(",");
     history.replace(`/compare?${frameworks ? "f=" + frameworks : ""}`);
 
-    setData({ ...data, datasets: filteredBenchmark });
+    setCharts(
+      comparedData.map(({ title, key }) => {
+        return {
+          title,
+          chartData: {
+            labels: level.map((l) => `Concurrency ${l}`),
+            datasets: filteredBenchmark.map((b) => ({
+              ...b,
+              data: [b.level64[key], b.level256[key], b.level512[key]],
+            })),
+          },
+        };
+      })
+    );
   };
 
   return (
@@ -64,14 +115,19 @@ function BarChart({ benchmarks }: Props) {
         defaultValue={defaultFrameworkIds}
         options={benchmarks.map((b) => ({
           value: b.id,
-          label: `${b.language} - ${b.framework.name} (${b.framework.version})`,
+          label: `${b.language.label} - ${b.framework.label} (${b.framework.version})`,
           color: b.color,
         }))}
         onChange={onChange}
       />
 
       <div className="pt-md">
-        <Bar data={data} height={100} />
+        {charts.map((c) => (
+          <div className="pb-lg">
+            <h4 className="text-center"> {c.title} </h4>
+            <Bar data={c.chartData} height={100} />
+          </div>
+        ))}
       </div>
     </div>
   );

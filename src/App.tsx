@@ -29,8 +29,12 @@ function App() {
         return {
           ...b,
           color: colors[i],
-          label: `${b.framework.name} (${b.framework.version})`,
-          data: [b.speed64, b.speed256, b.speed512],
+          label: `${b.framework.label} (${b.framework.version})`,
+          data: [
+            b.level64.totalRequests,
+            b.level256.totalRequests,
+            b.level512.totalRequests,
+          ],
           backgroundColor: chroma(colors[i]).brighten(1).hex(),
         };
       });

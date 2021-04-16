@@ -10,6 +10,7 @@
     "@types/node": "^12.20.7",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
+    "camelcase-keys": "^6.2.2",
     "chart.js": "^2.9.4",
     "chroma-js": "^2.1.1",
     "randomcolor": "^0.6.2",

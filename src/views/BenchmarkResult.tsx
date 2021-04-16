@@ -7,16 +7,16 @@ import { Benchmark } from "../api";
 const columns: IDataTableColumn<Benchmark>[] = [
   {
     name: "Language",
-    selector: "language",
+    selector: ({ language }) => `${language.label} (${language.version})`,
     sortable: true,
   },
   {
     name: "Framework",
-    selector: ({ framework }) => framework.name,
+    selector: ({ framework }) => framework.version,
     cell: ({ framework }) => (
       <div>
-        <a href={framework.link} target="_blank" rel="noreferrer">
-          {framework.name}
+        <a href={framework.website} target="_blank" rel="noreferrer">
+          {framework.label}
         </a>{" "}
         ({framework.version})
       </div>
@@ -25,17 +25,17 @@ const columns: IDataTableColumn<Benchmark>[] = [
   },
   {
     name: "Speed (64)",
-    selector: "speed64",
+    selector: ({ level64 }) => level64.totalRequests,
     sortable: true,
   },
   {
     name: "Speed (256)",
-    selector: "speed256",
+    selector: ({ level256 }) => level256.totalRequests,
     sortable: true,
   },
   {
     name: "Speed (512)",
-    selector: "speed512",
+    selector: ({ level512 }) => level512.totalRequests,
     sortable: true,
   },
 ];
@@ -53,6 +53,8 @@ function Table({ benchmarks }: Props) {
   const [selectedLanguages, setSelectedLanguages] = useState<SelectOption[]>(
     []
   );
+
+  console.log(benchmarks);
 
   const onChange = (data: any) => {
     setSelectedLanguages(data);
@@ -72,9 +74,12 @@ function Table({ benchmarks }: Props) {
         isMulti
         onChange={onChange}
         placeholder="Filter Languages..."
-        options={[
-          ...new Set(benchmarks.map((b) => b.language)),
-        ].map((lang) => ({ value: lang, label: lang }))}
+        options={[...new Set(benchmarks.map((b) => b.language))].map(
+          ({ label, version }) => ({
+            value: label,
+            label: `${label} (${version})`,
+          })
+        )}
       />
 
       <DataTable
@@ -87,7 +92,7 @@ function Table({ benchmarks }: Props) {
         data={
           selectedLanguages.length
             ? benchmarks.filter((b) =>
-                selectedLanguages.map((l) => l.value).includes(b.language)
+                selectedLanguages.map((l) => l.value).includes(b.language.label)
               )
             : benchmarks
         }

@@ -1,63 +1,89 @@
+import camelcaseKeys from "camelcase-keys";
+
 export interface Benchmark {
   id: number;
-  language: string;
-  framework: {
-    name: string;
-    link: string;
-    version: string;
-  };
-  speed64: number;
-  speed256: number;
-  speed512: number;
+  language: Language;
+  framework: Framework;
+  level64: Record<MetricTypes, number>;
+  level256: Record<MetricTypes, number>;
+  level512: Record<MetricTypes, number>;
 }
 
-export const getBenchmarkData = async (): Promise<Benchmark[]> => {
-  // Fetch markdown data from https://github.com/the-benchmarker/web-frameworks
-  const response = await fetch(
-    "https://raw.githubusercontent.com/the-benchmarker/web-frameworks/master/README.md"
+interface BenchmarkRawData {
+  metrics: Metric[];
+  frameworks: Framework[];
+  languages: Language[];
+}
+
+interface Framework {
+  id: number;
+  label: string;
+  version: number | string;
+  language: string;
+  website: string;
+}
+
+interface Language {
+  label: string;
+  version: number;
+}
+
+interface Metric {
+  level: 64 | 256 | 512;
+  label: MetricTypes;
+  value: number;
+  frameworkId: number;
+}
+
+export type MetricTypes =
+  | "averageLatency"
+  | "durationMs"
+  | "httpErrors"
+  | "maximumLatency"
+  | "minimimLatency"
+  | "percentile50"
+  | "percentile75"
+  | "percentile90"
+  | "percentile99"
+  | "percentile99999"
+  | "requestTimeouts"
+  | "socketConnectionErrors"
+  | "socketReadErrors"
+  | "socketWriteErrors"
+  | "standardDeviation"
+  | "totalBytesReceived"
+  | "totalRequests"
+  | "totalRequestsPerS";
+
+const metricsToObject = (metrics: Metric[], level: Metric["level"]) => {
+  return camelcaseKeys(
+    metrics
+      .filter((m) => m.level === level)
+      .reduce((obj, curr) => {
+        obj[curr.label] = Math.round(curr.value * 10) / 10;
+        return obj;
+      }, {} as Record<MetricTypes, number>)
   );
-  let md = await response.text();
-  // find table
-  md = md.slice(md.indexOf("|"), md.lastIndexOf("|"));
+};
 
-  const rows = md.split(/\r?\n/g);
-  // remove table header
-  rows.splice(0, 2);
+export const getBenchmarkData = async (): Promise<Benchmark[]> => {
+  const response = await fetch(
+    "https://raw.githubusercontent.com/the-benchmarker/web-frameworks/master/data.min.json"
+  );
 
-  return rows
-    .map((r) => {
-      // remove first and last character ( | ) and split to cells
-      const cells = r.slice(1, -1).split("|");
+  const data: BenchmarkRawData = camelcaseKeys(await response.json(), {
+    deep: true,
+  });
 
-      // trim all content and destruct array
-      const [
-        id,
-        language,
-        framework,
-        speed64,
-        speed256,
-        speed512,
-      ] = cells.map((c) => c.trim());
-
-      // extract framework name, link, and version
-      const [, name, link, version] = framework.match(
-        /\[(.*?)\]\((.*?)\) \((.*?)\)/
-      )!;
-
-      const toNumber = (s: string) => +s.replace(/[^0-9.]/g, "");
-
-      return {
-        id: +id,
-        language,
-        framework: {
-          name,
-          link,
-          version,
-        },
-        speed64: toNumber(speed64),
-        speed256: toNumber(speed256),
-        speed512: toNumber(speed512),
-      };
-    })
-    .sort((a, b) => a.language.localeCompare(b.language));
+  return data.frameworks.map((f) => {
+    const metrics = data.metrics.filter((m) => m.frameworkId === f.id);
+    return {
+      id: f.id,
+      framework: f,
+      language: data.languages.find((l) => l.label === f.language)!,
+      level64: metricsToObject(metrics, 64),
+      level256: metricsToObject(metrics, 256),
+      level512: metricsToObject(metrics, 512),
+    };
+  });
 };
