@@ -54,8 +54,6 @@ function Table({ benchmarks }: Props) {
     []
   );
 
-  console.log(benchmarks);
-
   const onChange = (data: any) => {
     setSelectedLanguages(data);
   };
