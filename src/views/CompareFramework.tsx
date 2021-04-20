@@ -27,7 +27,7 @@ const comparedData: { key: MetricTypes; title: string }[] = [
     title: "Average Latency (ms)",
   },
   {
-    key: "minimimLatency",
+    key: "minimumLatency",
     title: "Minimum Latency (ms)",
   },
   {

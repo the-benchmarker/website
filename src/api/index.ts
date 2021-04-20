@@ -40,7 +40,7 @@ export type MetricTypes =
   | "durationMs"
   | "httpErrors"
   | "maximumLatency"
-  | "minimimLatency"
+  | "minimumLatency"
   | "percentile50"
   | "percentile75"
   | "percentile90"
