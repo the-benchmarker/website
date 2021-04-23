@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import chroma from "chroma-js";
 import { Benchmark, getBenchmarkData } from "./api";
-import { ChartDataSets } from "chart.js";
+import { ChartDataset } from "chart.js";
 import randomColor from "randomcolor";
 import { BrowserRouter as Router } from "react-router-dom";
 import CacheRoute, { CacheSwitch } from "react-router-cache-route";
@@ -10,7 +10,7 @@ import BenchmarkResult from "./views/BenchmarkResult";
 import CompareFrameworks from "./views/CompareFramework";
 import AppHeader from "./components/AppHeader";
 
-export type BenchmarkDataSet = Benchmark & ChartDataSets & { color: string };
+export type BenchmarkDataSet = Benchmark & ChartDataset & { color: string };
 
 function App() {
   const [benchmarks, setBenchmarks] = useState<BenchmarkDataSet[]>([]);
