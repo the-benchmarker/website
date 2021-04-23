@@ -49,7 +49,7 @@ interface Props {
   benchmarks: Benchmark[];
 }
 
-function Table({ benchmarks }: Props) {
+function BenchmarkResult({ benchmarks }: Props) {
   const [selectedLanguages, setSelectedLanguages] = useState<SelectOption[]>(
     []
   );
@@ -101,4 +101,4 @@ function Table({ benchmarks }: Props) {
   );
 }
 
-export default Table;
+export default BenchmarkResult;

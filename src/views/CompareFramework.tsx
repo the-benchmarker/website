@@ -38,7 +38,7 @@ const comparedData: { key: MetricTypes; title: string }[] = [
 
 type ChartsData = { title: string; chartData: ChartData }[];
 
-function BarChart({ benchmarks }: Props) {
+function CompareFramework({ benchmarks }: Props) {
   const [charts, setCharts] = useState<ChartsData>([]);
   const [defaultFrameworkIds, setDefaultFrameworkIds] = useState<number[]>([]);
   const history = useHistory();
@@ -133,4 +133,4 @@ function BarChart({ benchmarks }: Props) {
   );
 }
 
-export default BarChart;
+export default CompareFramework;
