@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ChartData } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { useHistory } from "react-router-dom";
+import { isMobile } from "react-device-detect";
 
 import FrameworkSelector, {
   SelectOption,
@@ -65,7 +66,7 @@ function CompareFramework({ benchmarks }: Props) {
       return {
         title,
         chartData: {
-          labels: level.map((l) => `Concurrency ${l}`),
+          labels: level.map((l) => `${!isMobile ? "Concurrency " : ""}${l}`),
           datasets: filteredBenchmark.map((b) => ({
             ...b,
             data: level.map((l) => b[`level${l}` as const][key]),
@@ -96,7 +97,7 @@ function CompareFramework({ benchmarks }: Props) {
         return {
           title,
           chartData: {
-            labels: level.map((l) => `Concurrency ${l}`),
+            labels: level.map((l) => `${!isMobile ? "Concurrency " : ""}${l}`),
             datasets: filteredBenchmark.map((b) => ({
               ...b,
               data: [b.level64[key], b.level256[key], b.level512[key]],
@@ -125,7 +126,12 @@ function CompareFramework({ benchmarks }: Props) {
         {charts.map((c, i) => (
           <div className="pb-lg" key={i}>
             <h4 className="text-center"> {c.title} </h4>
-            <Bar data={c.chartData} height={100} />
+            <Bar
+              type="bar"
+              data={c.chartData}
+              height={isMobile ? 250 : 100}
+              options={{ indexAxis: isMobile ? "y" : "x" }}
+            />
           </div>
         ))}
       </div>
