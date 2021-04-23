@@ -15,10 +15,12 @@ interface Props {
   benchmarks: BenchmarkDataSet[];
 }
 
+type ComparedData = { key: MetricTypes; title: string }[];
+
 const level = [64, 256, 512] as const;
 
 // Data included to compare, each on their own chart (for each 64, 256, and 512)
-const comparedData: { key: MetricTypes; title: string }[] = [
+const comparedData: ComparedData = [
   {
     key: "totalRequests",
     title: "Total Request in 15 seconds",
@@ -45,6 +47,22 @@ function CompareFramework({ benchmarks }: Props) {
   const history = useHistory();
   const query = useQuery();
 
+  const updateCharts = (benchmarks: BenchmarkDataSet[]) => {
+    const charts = comparedData.map(({ title, key }) => {
+      return {
+        title,
+        chartData: {
+          labels: level.map((l) => `${!isMobile ? "Concurrency " : ""}${l}`),
+          datasets: benchmarks.map((b) => ({
+            ...b,
+            data: level.map((l) => b[`level${l}` as const][key]),
+          })),
+        },
+      };
+    });
+    setCharts(charts);
+  };
+
   // On Benchmark data change
   useEffect(() => {
     if (!benchmarks.length) return;
@@ -61,21 +79,7 @@ function CompareFramework({ benchmarks }: Props) {
     }, [] as BenchmarkDataSet[]);
 
     setDefaultFrameworkIds(filteredBenchmark.map((b) => b.id));
-
-    const charts: ChartsData = comparedData.map(({ title, key }) => {
-      return {
-        title,
-        chartData: {
-          labels: level.map((l) => `${!isMobile ? "Concurrency " : ""}${l}`),
-          datasets: filteredBenchmark.map((b) => ({
-            ...b,
-            data: level.map((l) => b[`level${l}` as const][key]),
-          })),
-        },
-      };
-    });
-
-    setCharts(charts);
+    updateCharts(filteredBenchmark);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [benchmarks]);
 
@@ -92,20 +96,7 @@ function CompareFramework({ benchmarks }: Props) {
       .join(",");
     history.replace(`/compare?${frameworks ? "f=" + frameworks : ""}`);
 
-    setCharts(
-      comparedData.map(({ title, key }) => {
-        return {
-          title,
-          chartData: {
-            labels: level.map((l) => `${!isMobile ? "Concurrency " : ""}${l}`),
-            datasets: filteredBenchmark.map((b) => ({
-              ...b,
-              data: [b.level64[key], b.level256[key], b.level512[key]],
-            })),
-          },
-        };
-      })
-    );
+    updateCharts(filteredBenchmark);
   };
 
   return (
