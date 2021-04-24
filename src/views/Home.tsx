@@ -95,7 +95,8 @@ export default function Home({ updateDate }: Props) {
           <a href="https://github.com/wg/wrk" target="_blank" rel="noreferrer">
             wrk
           </a>{" "}
-          (threads: 8, timeout: 8, duration: 15 seconds).
+          (threads: 8, timeout: 8, duration: 15 seconds) with <b>64</b>,{" "}
+          <b>256</b>, and <b>512</b> concurrency.
         </p>
         <div>
           Hardware used for the benchmark:
