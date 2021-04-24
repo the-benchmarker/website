@@ -110,7 +110,7 @@ export default function Home({ updateDate }: Props) {
         </div>
       </section>
       <Link to="/result" className=" text-center decoration-none">
-        <h4>Checkout the Benchmark Results!</h4>
+        <h4>Check Out the Benchmark Results!</h4>
       </Link>
     </div>
   );
