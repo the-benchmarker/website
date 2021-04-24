@@ -5,59 +5,15 @@ import { useHistory } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 
 import FrameworkSelector, {
-  SelectOption,
+  SelectOptionFramework,
 } from "../components/FrameworkSelector";
 import { BenchmarkDataSet } from "../App";
 import useQuery from "../hooks/useQuery";
-import { MetricTypes } from "../api";
+import { COMPARED_METRICS, CONCURRENCIES } from "../common";
 
 interface Props {
   benchmarks: BenchmarkDataSet[];
 }
-
-type ComparedData = { key: MetricTypes; title: string }[];
-
-const level = [64, 256, 512] as const;
-
-// Data included to compare, each on their own chart (for each 64, 256, and 512)
-const comparedData: ComparedData = [
-  {
-    key: "totalRequests",
-    title: "Total Request in 15 seconds",
-  },
-  {
-    key: "percentile50",
-    title: "50th Percentile Latency (ms)",
-  },
-  {
-    key: "percentile75",
-    title: "75th Percentile Latency (ms)",
-  },
-  {
-    key: "percentile90",
-    title: "90th Percentile Latency (ms)",
-  },
-  {
-    key: "percentile99",
-    title: "99th Percentile Latency (ms)",
-  },
-  {
-    key: "percentile99999",
-    title: "99.999th Percentile Latency (ms)",
-  },
-  {
-    key: "averageLatency",
-    title: "Average Latency (ms)",
-  },
-  {
-    key: "minimumLatency",
-    title: "Minimum Latency (ms)",
-  },
-  {
-    key: "maximumLatency",
-    title: "Maximum Latency (ms)",
-  },
-];
 
 type ChartsData = { key: string; title: string; chartData: ChartData }[];
 
@@ -68,22 +24,26 @@ function CompareFramework({ benchmarks }: Props) {
   const query = useQuery();
 
   const updateCharts = (benchmarks: BenchmarkDataSet[]) => {
-    const charts = comparedData.map(({ title, key }) => {
-      return {
-        key,
-        title,
-        chartData: {
-          labels: level.map((l) => `${!isMobile ? "Concurrency " : ""}${l}`),
-          datasets: benchmarks.map((b) => ({
-            ...b,
-            data: level.map((l) => b[`level${l}` as const][key]),
-          })),
-        },
-      };
-    });
-    setCharts(charts);
+    setCharts(
+      COMPARED_METRICS.map(({ title, key }) => {
+        const labels = CONCURRENCIES.map(
+          (c) => `${!isMobile ? "Concurrency " : ""}${c}`
+        );
+        const datasets = benchmarks.map((b) => ({
+          ...b,
+          data: CONCURRENCIES.map((c) => b[`level${c}` as const][key]),
+        }));
+
+        return {
+          key,
+          title,
+          chartData: { labels, datasets },
+        };
+      })
+    );
   };
 
+  // On charts load, scroll to hash bang
   useEffect(() => {
     const header = document.getElementById(window.location.hash.substring(1));
     if (!header) return;
@@ -111,7 +71,7 @@ function CompareFramework({ benchmarks }: Props) {
   }, [benchmarks]);
 
   // FrameworkSelector onChange handler
-  const onChange = (selectedOptions: SelectOption[]) => {
+  const onFrameworkChange = (selectedOptions: SelectOptionFramework[]) => {
     // Get benchmark data from selected frameworks id
     const filteredBenchmark = selectedOptions.map(
       (option) => benchmarks.find((b) => b.id === option.value)!
@@ -137,7 +97,7 @@ function CompareFramework({ benchmarks }: Props) {
           label: `${b.language.label} - ${b.framework.label} (${b.framework.version})`,
           color: b.color,
         }))}
-        onChange={onChange}
+        onChange={onFrameworkChange}
       />
 
       <div className="pt-md">

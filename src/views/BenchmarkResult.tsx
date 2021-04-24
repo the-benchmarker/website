@@ -3,24 +3,17 @@ import Select from "react-select";
 import DataTable, { IDataTableColumn } from "react-data-table-component";
 import { isMobile } from "react-device-detect";
 import { Benchmark, MetricTypes } from "../api";
+import { COMPARED_METRICS, CONCURRENCIES, SelectOption } from "../common";
 
-const levels = [64, 256, 512] as const;
-const metrics: Partial<Record<MetricTypes, string>> = {
-  totalRequests: "Total Requests",
-  percentile50: "P50 Latency",
-  percentile75: "P75 Latency",
-  percentile90: "P90 Latency",
-  percentile99: "P99 Latency",
-  percentile99999: "P99.999 Latency",
-  minimumLatency: "Minimum Latency",
-  averageLatency: "Average Latency",
-  maximumLatency: "Maximum Latency",
+const defaultMetric = {
+  label: "Total Requests",
+  value: "totalRequests",
 };
 
-const metricOptions = (Object.keys(metrics) as MetricTypes[]).map((m) => {
+const metricOptions = COMPARED_METRICS.map((m) => {
   return {
-    label: metrics[m]!,
-    value: m,
+    label: m.title,
+    value: m.key,
   };
 });
 
@@ -45,43 +38,31 @@ const staticColumns: IDataTableColumn<Benchmark>[] = [
   },
 ];
 
-const defaultMetric = {
-  label: "Total Requests",
-  value: "totalRequests",
-};
-
-interface SelectOption {
-  label: string;
-  value: string;
-}
-
 interface Props {
   benchmarks: Benchmark[];
 }
 
 function BenchmarkResult({ benchmarks }: Props) {
-  const [selectedLanguages, setSelectedLanguages] = useState<SelectOption[]>(
-    []
-  );
-  const [selectedMetric, setSelectedMetric] = useState<SelectOption | null>(
-    defaultMetric
-  );
+  const [languages, setLanguages] = useState<SelectOption[]>([]);
+  const [metric, setMetric] = useState<SelectOption | null>(defaultMetric);
   const [columns, setColumns] = useState<IDataTableColumn<Benchmark>[]>([]);
-
-  const onChange = (data: any) => {
-    setSelectedLanguages(data);
-  };
 
   const scrollToTitle = () => {
     document.getElementById("title")!.scrollIntoView();
   };
 
+  // On filtered languages and selectric metric change
   useEffect(() => {
-    const metric = (selectedMetric?.value || defaultMetric) as MetricTypes;
-    const dynamicColumns = levels.map((l) => {
+    // Get metric data by metric key
+    const { key, title } = COMPARED_METRICS.find(
+      ({ key }) => key === ((metric?.value || defaultMetric) as MetricTypes)
+    )!;
+
+    // create columns based on selected metric
+    const dynamicColumns = CONCURRENCIES.map((c) => {
       return {
-        name: `${metrics[metric]} (${l})`,
-        selector: (b: Benchmark) => b[`level${l}` as const][metric],
+        name: `${title} (${c})`,
+        selector: (b: Benchmark) => b[`level${c}` as const][key],
         sortable: true,
         minWidth: "150px",
         right: true,
@@ -89,7 +70,7 @@ function BenchmarkResult({ benchmarks }: Props) {
     });
 
     setColumns([...staticColumns, ...dynamicColumns]);
-  }, [selectedLanguages, selectedMetric]);
+  }, [languages, metric]);
 
   return (
     <div>
@@ -99,22 +80,22 @@ function BenchmarkResult({ benchmarks }: Props) {
 
       <Select
         isMulti
-        onChange={onChange}
-        placeholder="Filter Languages..."
+        onChange={(data) => setLanguages(data as SelectOption[])}
         options={[...new Set(benchmarks.map((b) => b.language))].map(
           ({ label, version }) => ({
             value: label,
             label: `${label} (${version})`,
           })
         )}
+        placeholder="Filter Languages..."
       />
 
       <div style={{ maxWidth: "480px" }}>
         <Select
-          onChange={(data) => setSelectedMetric(data!)}
-          placeholder="Select Metric..."
+          onChange={setMetric}
           defaultValue={defaultMetric}
           options={metricOptions}
+          placeholder="Select Metric..."
           className="pt-md"
         />
       </div>
@@ -127,9 +108,9 @@ function BenchmarkResult({ benchmarks }: Props) {
         paginationComponentOptions={{ selectAllRowsItem: true }}
         onChangePage={scrollToTitle}
         data={
-          selectedLanguages.length
+          languages.length
             ? benchmarks.filter((b) =>
-                selectedLanguages.map((l) => l.value).includes(b.language.label)
+                languages.map((l) => l.value).includes(b.language.label)
               )
             : benchmarks
         }

@@ -1,6 +1,7 @@
 import React from "react";
 import chroma from "chroma-js";
 import Select from "react-select";
+import { SelectOption } from "../common";
 
 // Create custom type instead of using StylesConfig<SelectOption, true> because it slows down TypeScript for some reason
 interface Styles<T = any> {
@@ -19,20 +20,18 @@ interface Styles<T = any> {
   multiValueRemove: (style: any, prop: { data: T }) => void;
 }
 
-export interface SelectOption {
-  label: string;
-  value: number;
+export interface SelectOptionFramework extends SelectOption {
   color: string;
 }
 
 interface Props {
   options: SelectOption[];
-  onChange: (options: SelectOption[]) => void;
+  onChange: (options: SelectOptionFramework[]) => void;
   defaultValue?: number[];
 }
 
 /** Styles for <Select> */
-const styles: Styles<SelectOption> = {
+const styles: Styles<SelectOptionFramework> = {
   control: (styles) => ({ ...styles, backgroundColor: "white" }),
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
     const color = chroma(data.color);

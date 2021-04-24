@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import chroma from "chroma-js";
 import { Benchmark, getBenchmarkData } from "./api";
-import { ChartDataset } from "chart.js";
 import randomColor from "randomcolor";
 import { BrowserRouter as Router } from "react-router-dom";
 import CacheRoute, { CacheSwitch } from "react-router-cache-route";
@@ -12,7 +11,11 @@ import Home from "./views/Home";
 import AppHeader from "./components/AppHeader";
 import ScrollToTop from "./components/ScrollToTop";
 
-export type BenchmarkDataSet = Benchmark & ChartDataset & { color: string };
+export type BenchmarkDataSet = Benchmark & {
+  color: string;
+  label: string;
+  backgroundColor: string;
+};
 
 function App() {
   const [benchmarks, setBenchmarks] = useState<BenchmarkDataSet[]>([]);
@@ -34,11 +37,6 @@ function App() {
           ...b,
           color: colors[i],
           label: `${b.framework.label} (${b.framework.version})`,
-          data: [
-            b.level64.totalRequests,
-            b.level256.totalRequests,
-            b.level512.totalRequests,
-          ],
           backgroundColor: chroma(colors[i]).brighten(1).hex(),
         };
       });
