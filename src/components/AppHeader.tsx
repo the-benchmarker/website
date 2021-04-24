@@ -11,7 +11,7 @@ function NavBar() {
             <Link to="/">Home</Link>
           </li>
           <li>
-            <Link to="/result">Frameworks Benchmark</Link>
+            <Link to="/result">Benchmark Results</Link>
           </li>
           <li>
             <Link to="/compare">Compare Frameworks</Link>
