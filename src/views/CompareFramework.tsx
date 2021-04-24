@@ -39,7 +39,7 @@ const comparedData: ComparedData = [
   },
 ];
 
-type ChartsData = { title: string; chartData: ChartData }[];
+type ChartsData = { key: string; title: string; chartData: ChartData }[];
 
 function CompareFramework({ benchmarks }: Props) {
   const [charts, setCharts] = useState<ChartsData>([]);
@@ -50,6 +50,7 @@ function CompareFramework({ benchmarks }: Props) {
   const updateCharts = (benchmarks: BenchmarkDataSet[]) => {
     const charts = comparedData.map(({ title, key }) => {
       return {
+        key,
         title,
         chartData: {
           labels: level.map((l) => `${!isMobile ? "Concurrency " : ""}${l}`),
@@ -62,6 +63,12 @@ function CompareFramework({ benchmarks }: Props) {
     });
     setCharts(charts);
   };
+
+  useEffect(() => {
+    const header = document.getElementById(window.location.hash.substring(1));
+    if (!header) return;
+    header.scrollIntoView();
+  }, [charts]);
 
   // On Benchmark data change
   useEffect(() => {
@@ -116,7 +123,11 @@ function CompareFramework({ benchmarks }: Props) {
       <div className="pt-md">
         {charts.map((c, i) => (
           <div className="pb-lg" key={i}>
-            <h4 className="text-center"> {c.title} </h4>
+            <h4 id={c.key} className="text-center">
+              <a className="decoration-none" href={`#${c.key}`}>
+                {c.title}
+              </a>
+            </h4>
             <Bar
               type="bar"
               data={c.chartData}
