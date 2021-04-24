@@ -26,6 +26,26 @@ const comparedData: ComparedData = [
     title: "Total Request in 15 seconds",
   },
   {
+    key: "percentile50",
+    title: "50th Percentile Latency (ms)",
+  },
+  {
+    key: "percentile75",
+    title: "75th Percentile Latency (ms)",
+  },
+  {
+    key: "percentile90",
+    title: "90th Percentile Latency (ms)",
+  },
+  {
+    key: "percentile99",
+    title: "99th Percentile Latency (ms)",
+  },
+  {
+    key: "percentile99999",
+    title: "99.999th Percentile Latency (ms)",
+  },
+  {
     key: "averageLatency",
     title: "Average Latency (ms)",
   },
