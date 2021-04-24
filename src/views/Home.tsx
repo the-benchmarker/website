@@ -29,23 +29,24 @@ export default function Home({ updateDate }: Props) {
           here
         </a>
         .
-        <h4>
-          Last Update: <b>{updateDate}</b>
-        </h4>
       </p>
+      <h4>
+        Last Update: <b>{updateDate}</b>
+      </h4>
       <hr />
       <section>
+        <h3>Motivation</h3>
         <p>
-          <h3>Motivation</h3>
           There are many frameworks, each one comes with its own advantages and
           drawbacks. The purpose of this project is to identify them and attempt
           to measure their differences (performance is only one metric).
         </p>
+        <h4>What is a framework?</h4>
         <p>
-          <h4>What is a framework?</h4>A framework is a set of components
-          working together. The main intention behind a framework is to
-          facilitate (app or service) creation. The way a framework help any
-          developer could vary from one to an other.
+          A framework is a set of components working together. The main
+          intention behind a framework is to facilitate (app or service)
+          creation. The way a framework help any developer could vary from one
+          to an other.
         </p>
         <div>
           A majority of frameworks could be split in 2 parts:
