@@ -9,13 +9,13 @@ import FrameworkSelector, {
 } from "../components/FrameworkSelector";
 import { BenchmarkDataSet } from "../App";
 import useQuery from "../hooks/useQuery";
-import { COMPARED_METRICS, CONCURRENCIES } from "../common";
+import { COMPARED_METRICS, CONCURRENCIES, ComparedMetric } from "../common";
 
 interface Props {
   benchmarks: BenchmarkDataSet[];
 }
 
-type ChartsData = { key: string; title: string; chartData: ChartData }[];
+type ChartsData = (ComparedMetric & { chartData: ChartData })[];
 
 function CompareFramework({ benchmarks }: Props) {
   const [charts, setCharts] = useState<ChartsData>([]);
@@ -25,18 +25,17 @@ function CompareFramework({ benchmarks }: Props) {
 
   const updateCharts = (benchmarks: BenchmarkDataSet[]) => {
     setCharts(
-      COMPARED_METRICS.map(({ title, key }) => {
+      COMPARED_METRICS.map((metric) => {
         const labels = CONCURRENCIES.map(
           (c) => `${!isMobile ? "Concurrency " : ""}${c}`
         );
         const datasets = benchmarks.map((b) => ({
           ...b,
-          data: CONCURRENCIES.map((c) => b[`level${c}` as const][key]),
+          data: CONCURRENCIES.map((c) => b[`level${c}` as const][metric.key]),
         }));
 
         return {
-          key,
-          title,
+          ...metric,
           chartData: { labels, datasets },
         };
       })
@@ -105,7 +104,7 @@ function CompareFramework({ benchmarks }: Props) {
           <div className="pb-lg" key={i}>
             <h4 id={c.key} className="text-center">
               <a className="decoration-none" href={`#${c.key}`}>
-                {c.title}
+                {c.longTitle || c.title}
               </a>
             </h4>
             <Bar

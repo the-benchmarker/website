@@ -1,15 +1,15 @@
 import { MetricTypes } from "../api";
 
-type ComparedMetrics = {
+export type ComparedMetric = {
   key: MetricTypes;
   title: string;
   longTitle?: string;
-}[];
+};
 
 export const CONCURRENCIES = [64, 256, 512] as const;
 
 // Data included to compare, each on their own chart (for each 64, 256, and 512)
-export const COMPARED_METRICS: ComparedMetrics = [
+export const COMPARED_METRICS: ComparedMetric[] = [
   {
     key: "totalRequests",
     title: "Total Requests",
