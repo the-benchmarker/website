@@ -1,10 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "react-select";
 import DataTable, { IDataTableColumn } from "react-data-table-component";
 import { isMobile } from "react-device-detect";
-import { Benchmark } from "../api";
+import { Benchmark, MetricTypes } from "../api";
 
-const columns: IDataTableColumn<Benchmark>[] = [
+const levels = [64, 256, 512] as const;
+const metrics: Partial<Record<MetricTypes, string>> = {
+  totalRequests: "Total Requests",
+  percentile50: "P50 Latency",
+  percentile75: "P75 Latency",
+  percentile90: "P90 Latency",
+  percentile99: "P99 Latency",
+  percentile99999: "P99.999 Latency",
+  minimumLatency: "Minimum Latency",
+  averageLatency: "Average Latency",
+  maximumLatency: "Maximum Latency",
+};
+
+const metricOptions = (Object.keys(metrics) as MetricTypes[]).map((m) => {
+  return {
+    label: metrics[m]!,
+    value: m,
+  };
+});
+
+const staticColumns: IDataTableColumn<Benchmark>[] = [
   {
     name: "Language",
     selector: ({ language }) => `${language.label} (${language.version})`,
@@ -23,22 +43,12 @@ const columns: IDataTableColumn<Benchmark>[] = [
     ),
     sortable: true,
   },
-  {
-    name: "Speed (64)",
-    selector: ({ level64 }) => level64.totalRequests,
-    sortable: true,
-  },
-  {
-    name: "Speed (256)",
-    selector: ({ level256 }) => level256.totalRequests,
-    sortable: true,
-  },
-  {
-    name: "Speed (512)",
-    selector: ({ level512 }) => level512.totalRequests,
-    sortable: true,
-  },
 ];
+
+const defaultMetric = {
+  label: "Total Requests",
+  value: "totalRequests",
+};
 
 interface SelectOption {
   label: string;
@@ -53,6 +63,10 @@ function BenchmarkResult({ benchmarks }: Props) {
   const [selectedLanguages, setSelectedLanguages] = useState<SelectOption[]>(
     []
   );
+  const [selectedMetric, setSelectedMetric] = useState<SelectOption | null>(
+    defaultMetric
+  );
+  const [columns, setColumns] = useState<IDataTableColumn<Benchmark>[]>([]);
 
   const onChange = (data: any) => {
     setSelectedLanguages(data);
@@ -61,6 +75,21 @@ function BenchmarkResult({ benchmarks }: Props) {
   const scrollToTitle = () => {
     document.getElementById("title")!.scrollIntoView();
   };
+
+  useEffect(() => {
+    const metric = (selectedMetric?.value || defaultMetric) as MetricTypes;
+    const dynamicColumns = levels.map((l) => {
+      return {
+        name: `${metrics[metric]} (${l})`,
+        selector: (b: Benchmark) => b[`level${l}` as const][metric],
+        sortable: true,
+        minWidth: "150px",
+        right: true,
+      };
+    });
+
+    setColumns([...staticColumns, ...dynamicColumns]);
+  }, [selectedLanguages, selectedMetric]);
 
   return (
     <div>
@@ -79,6 +108,16 @@ function BenchmarkResult({ benchmarks }: Props) {
           })
         )}
       />
+
+      <div style={{ maxWidth: "480px" }}>
+        <Select
+          onChange={(data) => setSelectedMetric(data!)}
+          placeholder="Select Metric..."
+          defaultValue={defaultMetric}
+          options={metricOptions}
+          className="pt-md"
+        />
+      </div>
 
       <DataTable
         columns={columns}
