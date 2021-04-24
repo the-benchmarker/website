@@ -21,9 +21,20 @@ a {
 
 .nav-links li {
   display: inline-block;
-  margin: 0 10px;
+  margin: 0 20px;
 }
 
+@media (max-width: 1024px) {
+  .nav-links li {
+    display: block;
+    margin: 5px 0px;
+  }
+}
+
+.nav-links li a {
+  text-decoration: none;
+  font-size: 1.25rem;
+}
 
 hr {
   border: 0; 
@@ -31,28 +42,43 @@ hr {
   margin: 24px 0px;
 }
 
-h1 {
-  font-size: 3rem;
+h1, h2, h3, h4 {
   font-weight: 300;
   line-height: 1.2;
+}
+
+h1 {
+  font-size: 3rem;
 }
 
 h2 {
   font-size: 2.5rem;
-  font-weight: 300;
-  line-height: 1.2;
 }
 
 h3 {
   font-size: 2rem;
-  font-weight: 300;
-  line-height: 1.2;
 }
 
 h4 {
   font-size: 1.5rem;
-  font-weight: 300;
-  line-height: 1.2;
+}
+
+@media (max-width: 1024px) {
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.75rem;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+  }
+  
+  h4 {
+    font-size: 1.25rem;
+  }
 }
 
 .container {
@@ -89,6 +115,11 @@ h4 {
 
 .pt-lg {
   padding-top: 36px;
+}
+
+.my-none {
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
 }
 
 .loader,
