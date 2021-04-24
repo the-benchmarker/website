@@ -8,18 +8,21 @@ import CacheRoute, { CacheSwitch } from "react-router-cache-route";
 
 import BenchmarkResult from "./views/BenchmarkResult";
 import CompareFrameworks from "./views/CompareFramework";
+import Home from "./views/Home";
 import AppHeader from "./components/AppHeader";
+import ScrollToTop from "./components/ScrollToTop";
 
 export type BenchmarkDataSet = Benchmark & ChartDataset & { color: string };
 
 function App() {
   const [benchmarks, setBenchmarks] = useState<BenchmarkDataSet[]>([]);
+  const [updatedAt, setUpdatedAt] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch data
   useEffect(() => {
     (async () => {
-      const benchmarks = await getBenchmarkData();
+      const { data: benchmarks, updatedAt } = await getBenchmarkData();
       const colors = randomColor({
         count: benchmarks.length,
         luminosity: "dark",
@@ -41,6 +44,7 @@ function App() {
       });
 
       setBenchmarks(data);
+      setUpdatedAt(updatedAt.split(" ")[0]);
       setIsLoading(false);
     })();
   }, []);
@@ -50,10 +54,14 @@ function App() {
       {!isLoading ? (
         <div>
           <AppHeader />
+          <ScrollToTop />
 
           <div className="container">
             <CacheSwitch>
-              <CacheRoute exact path={["/", "/result"]}>
+              <CacheRoute exact path="/">
+                <Home updateDate={updatedAt} />
+              </CacheRoute>
+              <CacheRoute exact path="/result">
                 <BenchmarkResult benchmarks={benchmarks} />
               </CacheRoute>
               <CacheRoute path="/compare">

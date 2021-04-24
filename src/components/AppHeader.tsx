@@ -8,6 +8,9 @@ function NavBar() {
 
         <ul className="nav-links">
           <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
             <Link to="/result">Frameworks Benchmark</Link>
           </li>
           <li>
