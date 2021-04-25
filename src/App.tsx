@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy, Suspense } from "react";
 import chroma from "chroma-js";
 import { Benchmark, getBenchmarkData } from "./api";
 import randomColor from "randomcolor";
 import { BrowserRouter as Router } from "react-router-dom";
 import CacheRoute, { CacheSwitch } from "react-router-cache-route";
 
-import BenchmarkResult from "./views/BenchmarkResult";
-import CompareFrameworks from "./views/CompareFramework";
 import Home from "./views/Home";
 import AppHeader from "./components/AppHeader";
 import ScrollToTop from "./components/ScrollToTop";
+
+const BenchmarkResult = lazy(() => import("./views/BenchmarkResult"));
+const CompareFrameworks = lazy(() => import("./views/CompareFramework"));
 
 export type BenchmarkDataSet = Benchmark & {
   color: string;
@@ -55,17 +56,19 @@ function App() {
           <ScrollToTop />
 
           <div className="container">
-            <CacheSwitch>
-              <CacheRoute exact path="/">
-                <Home updateDate={updatedAt} />
-              </CacheRoute>
-              <CacheRoute exact path="/result">
-                <BenchmarkResult benchmarks={benchmarks} />
-              </CacheRoute>
-              <CacheRoute path="/compare">
-                <CompareFrameworks benchmarks={benchmarks} />
-              </CacheRoute>
-            </CacheSwitch>
+            <Suspense fallback={<div className="loader">Loading...</div>}>
+              <CacheSwitch>
+                <CacheRoute exact path="/">
+                  <Home updateDate={updatedAt} />
+                </CacheRoute>
+                <CacheRoute exact path="/result">
+                  <BenchmarkResult benchmarks={benchmarks} />
+                </CacheRoute>
+                <CacheRoute path="/compare">
+                  <CompareFrameworks benchmarks={benchmarks} />
+                </CacheRoute>
+              </CacheSwitch>
+            </Suspense>
           </div>
 
           {/* Bottom Space */}
