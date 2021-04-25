@@ -24,6 +24,7 @@ function CompareFramework({ benchmarks }: Props) {
   const query = useQuery();
 
   const updateCharts = (benchmarks: BenchmarkDataSet[]) => {
+    if (!benchmarks.length) return setCharts([]);
     setCharts(
       COMPARED_METRICS.map((metric) => {
         const labels = CONCURRENCIES.map(
