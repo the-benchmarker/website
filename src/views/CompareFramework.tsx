@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChartData } from "chart.js";
+import { ChartData, ChartOptions } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { useHistory } from "react-router-dom";
 import { isMobile } from "react-device-detect";
@@ -111,7 +111,17 @@ function CompareFramework({ benchmarks }: Props) {
               type="bar"
               data={c.chartData}
               height={isMobile ? 250 : 100}
-              options={{ indexAxis: isMobile ? "y" : "x" }}
+              options={
+                {
+                  indexAxis: isMobile ? "y" : "x",
+                  animation: isMobile ? false : undefined,
+                  plugins: {
+                    tooltip: {
+                      mode: isMobile ? "index" : "nearest",
+                    },
+                  },
+                } as ChartOptions
+              }
             />
           </div>
         ))}
