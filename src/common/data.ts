@@ -6,6 +6,7 @@ export type ComparedMetric = {
   title: string;
   longTitle?: string;
   format?: (...args: any[]) => string | number;
+  round?: boolean;
 };
 
 export const CONCURRENCIES = [64, 256, 512] as const;
@@ -17,6 +18,7 @@ export const COMPARED_METRICS: ComparedMetric[] = [
     title: "Total Requests",
     longTitle: "Total Request in 15 seconds",
     format: formatThousandSeparated,
+    round: true,
   },
   {
     key: "percentile50",
