@@ -1,14 +1,29 @@
 # Web Frameworks Benchmark
 
-##### Live Demo: https://web-frameworks-benchmark.netlify.app
+This is the repository of the [Web Frameworks Benchmark Website](https://web-frameworks-benchmark.netlify.app). It's currently hosted by [Netlify](https://www.netlify.com/).
 
-This is a React App built to display [web frameworks benchmark](https://github.com/the-benchmarker/web-frameworks) data with [Chart.js](https://www.chartjs.org)
+Source code for the benchmark itself: [the-benchmarker/web-frameworks](https://github.com/the-benchmarker/web-frameworks)
 
-![Chart](https://i.ibb.co/QPzzH3L/image.png)
-![Table](https://i.ibb.co/4fdhDmW/image.png)
+Found a bug or have a suggestion/ feedback? Feel free to [create a new issue](https://github.com/the-benchmarker/website/issues/new)
 
-Built with:
-- [React](http://react.com/)
-- [react-chartjs-2](https://github.com/reactchartjs/react-chartjs-2)
-- [react-select](https://github.com/jedwatson/react-select)
-- [react-data-table-component](https://github.com/jbetancur/react-data-table-component)
+---
+
+### Contributing
+
+1. Fork this repository
+2. Clone the forked repository
+3. Install required dependencies
+```
+cd website
+npm i
+```
+4. Run dev server with hot reloading feature
+```
+npm run dev
+```
+5. Make awesome changes and commit it
+6. Create a [Pull Request](https://github.com/the-benchmarker/website/pulls)
+
+---
+
+Built with [React](https://github.com/facebook/react)
