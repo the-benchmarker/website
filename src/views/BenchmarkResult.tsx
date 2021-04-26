@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import DataTable, { IDataTableColumn } from "react-data-table-component";
 import { isMobile } from "react-device-detect";
+import FrameworkSelector from "../components/FrameworkSelector";
 import { Benchmark, MetricTypes } from "../api";
 import { COMPARED_METRICS, CONCURRENCIES, SelectOption } from "../common";
 
@@ -44,6 +45,8 @@ interface Props {
 
 function BenchmarkResult({ benchmarks }: Props) {
   const [languages, setLanguages] = useState<SelectOption[]>([]);
+  const [frameworks, setFrameworks] = useState<SelectOption[]>([]);
+  const [tableData, setTableData] = useState<Benchmark[]>([]);
   const [metric, setMetric] = useState<SelectOption | null>(defaultMetric);
   const [columns, setColumns] = useState<IDataTableColumn<Benchmark>[]>([]);
 
@@ -51,7 +54,7 @@ function BenchmarkResult({ benchmarks }: Props) {
     document.getElementById("title")!.scrollIntoView();
   };
 
-  // On filtered languages and selectric metric change
+  // On metric change
   useEffect(() => {
     // Get metric data by metric key
     const { key, title, format, round } = COMPARED_METRICS.find(
@@ -76,7 +79,22 @@ function BenchmarkResult({ benchmarks }: Props) {
     });
 
     setColumns([...staticColumns, ...dynamicColumns]);
-  }, [languages, metric]);
+  }, [metric]);
+
+  // On filter frameworks or languages change
+  useEffect(() => {
+    if (!benchmarks) return;
+    if (!frameworks.length && !languages.length)
+      return setTableData(benchmarks);
+
+    const filteredBenchmark = benchmarks.filter(
+      (b) =>
+        languages.map((l) => l.value).includes(b.language.label) ||
+        frameworks.map((f) => f.value).includes(b.framework.id)
+    );
+
+    setTableData(filteredBenchmark);
+  }, [frameworks, languages, benchmarks]);
 
   return (
     <div>
@@ -96,6 +114,17 @@ function BenchmarkResult({ benchmarks }: Props) {
         placeholder="Filter Languages..."
       />
 
+      <div className="pt-md">
+        <FrameworkSelector
+          options={benchmarks.map((b) => ({
+            value: b.id,
+            label: `${b.language.label} - ${b.framework.label} (${b.framework.version})`,
+          }))}
+          disableStyle
+          onChange={setFrameworks}
+        />
+      </div>
+
       <div style={{ maxWidth: "480px" }}>
         <Select
           onChange={setMetric}
@@ -113,13 +142,7 @@ function BenchmarkResult({ benchmarks }: Props) {
         paginationRowsPerPageOptions={[25, 50, 100]}
         paginationComponentOptions={{ selectAllRowsItem: true }}
         onChangePage={scrollToTitle}
-        data={
-          languages.length
-            ? benchmarks.filter((b) =>
-                languages.map((l) => l.value).includes(b.language.label)
-              )
-            : benchmarks
-        }
+        data={tableData}
         noHeader
         className="pt-md"
       />
