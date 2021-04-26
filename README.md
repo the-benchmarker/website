@@ -1,6 +1,6 @@
 # Web Frameworks Benchmark
 
-This is the repository of the [Web Frameworks Benchmark Website](https://web-frameworks-benchmark.netlify.app). It's currently hosted by [Netlify](https://www.netlify.com/).
+This is the repository of the [Web Frameworks Benchmark Website](https://web-frameworks-benchmark.netlify.app). It's currently hosted on [Netlify](https://www.netlify.com/).
 
 Source code for the benchmark itself: [the-benchmarker/web-frameworks](https://github.com/the-benchmarker/web-frameworks)
 
