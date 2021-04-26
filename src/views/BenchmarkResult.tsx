@@ -54,7 +54,7 @@ function BenchmarkResult({ benchmarks }: Props) {
   // On filtered languages and selectric metric change
   useEffect(() => {
     // Get metric data by metric key
-    const { key, title } = COMPARED_METRICS.find(
+    const { key, title, format } = COMPARED_METRICS.find(
       ({ key }) => key === ((metric?.value || defaultMetric) as MetricTypes)
     )!;
 
@@ -64,6 +64,10 @@ function BenchmarkResult({ benchmarks }: Props) {
         name: `${title} (${c})`,
         selector: (b: Benchmark) => b[`level${c}` as const][key],
         sortable: true,
+        format: (b: Benchmark) =>
+          format
+            ? format(b[`level${c}` as const][key])
+            : b[`level${c}` as const][key],
         minWidth: "150px",
         right: true,
       };
