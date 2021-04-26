@@ -28,6 +28,7 @@ interface Props {
   options: SelectOption[];
   onChange: (options: SelectOptionFramework[]) => void;
   defaultValue?: number[];
+  disableStyle?: boolean;
 }
 
 /** Styles for <Select> */
@@ -81,7 +82,12 @@ const styles: Styles<SelectOptionFramework> = {
   }),
 };
 
-function FrameworkSelector({ options, onChange, defaultValue = [] }: Props) {
+function FrameworkSelector({
+  options,
+  onChange,
+  defaultValue = [],
+  disableStyle = false,
+}: Props) {
   const onOptionsChange = (data: any) => {
     onChange(data);
   };
@@ -97,7 +103,7 @@ function FrameworkSelector({ options, onChange, defaultValue = [] }: Props) {
       }, [] as SelectOption[])}
       placeholder="Select Frameworks..."
       onChange={onOptionsChange}
-      styles={styles as any}
+      styles={!disableStyle ? (styles as any) : undefined}
       options={options}
     />
   );
