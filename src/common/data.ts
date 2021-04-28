@@ -14,9 +14,9 @@ export const CONCURRENCIES = [64, 256, 512] as const;
 // Data included to compare, each on their own chart (for each 64, 256, and 512)
 export const COMPARED_METRICS: ComparedMetric[] = [
   {
-    key: "totalRequests",
-    title: "Total Requests",
-    longTitle: "Total Request in 15 seconds",
+    key: "totalRequestsPerS",
+    title: "Requests / Second",
+    longTitle: "Total Request per Second",
     format: formatThousandSeparated,
     round: true,
   },

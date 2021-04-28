@@ -7,8 +7,8 @@ import { Benchmark, MetricTypes } from "../api";
 import { COMPARED_METRICS, CONCURRENCIES, SelectOption } from "../common";
 
 const defaultMetric = {
-  label: "Total Requests",
-  value: "totalRequests",
+  label: "Request / Second",
+  value: "totalRequestsPerS",
 };
 
 const metricOptions = COMPARED_METRICS.map((m) => {
