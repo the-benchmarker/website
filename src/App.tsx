@@ -23,60 +23,57 @@ function App() {
   const [updatedAt, setUpdatedAt] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch data
+  const fetchBenchmarkData = async (sha = "master", updateDate = false) => {
+    setIsLoading(true);
+    const { data: benchmarks, updatedAt } = await getBenchmarkData(sha);
+    const colors = randomColor({
+      count: benchmarks.length,
+      luminosity: "dark",
+    });
+
+    // Map data, add additional property for chart datasets
+    const data: BenchmarkDataSet[] = benchmarks.map((b, i) => {
+      return {
+        ...b,
+        color: colors[i],
+        label: `${b.framework.label} (${b.framework.version})`,
+        backgroundColor: chroma(colors[i]).brighten(1).hex(),
+      };
+    });
+
+    setBenchmarks(data);
+    if (updateDate) setUpdatedAt(updatedAt.split(" ")[0]);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
-    (async () => {
-      const { data: benchmarks, updatedAt } = await getBenchmarkData();
-      const colors = randomColor({
-        count: benchmarks.length,
-        luminosity: "dark",
-      });
-
-      // Map data, add additional property for chart datasets
-      const data: BenchmarkDataSet[] = benchmarks.map((b, i) => {
-        return {
-          ...b,
-          color: colors[i],
-          label: `${b.framework.label} (${b.framework.version})`,
-          backgroundColor: chroma(colors[i]).brighten(1).hex(),
-        };
-      });
-
-      setBenchmarks(data);
-      setUpdatedAt(updatedAt.split(" ")[0]);
-      setIsLoading(false);
-    })();
+    fetchBenchmarkData("master", true);
   }, []);
 
   return (
     <Router>
-      {!isLoading ? (
-        <div>
-          <AppHeader />
-          <ScrollToTop />
-
-          <div className="container">
-            <Suspense fallback={<div className="loader">Loading...</div>}>
-              <CacheSwitch>
-                <CacheRoute exact path="/">
-                  <Home updateDate={updatedAt} />
-                </CacheRoute>
-                <CacheRoute exact path="/result">
-                  <BenchmarkResult benchmarks={benchmarks} />
-                </CacheRoute>
-                <CacheRoute path="/compare">
-                  <CompareFrameworks benchmarks={benchmarks} />
-                </CacheRoute>
-              </CacheSwitch>
-            </Suspense>
-          </div>
-
-          {/* Bottom Space */}
-          <div style={{ height: "25vh" }}></div>
+      <div>
+        <AppHeader onHistoryChange={fetchBenchmarkData} />
+        <ScrollToTop />
+        {isLoading ? <div className="loader">Loading...</div> : undefined}
+        <div className={`container ${isLoading ? "hidden" : ""}`}>
+          <Suspense fallback={<div className="loader">Loading...</div>}>
+            <CacheSwitch>
+              <CacheRoute exact path="/">
+                <Home updateDate={updatedAt} />
+              </CacheRoute>
+              <CacheRoute exact path="/result">
+                <BenchmarkResult benchmarks={benchmarks} />
+              </CacheRoute>
+              <CacheRoute path="/compare">
+                <CompareFrameworks benchmarks={benchmarks} />
+              </CacheRoute>
+            </CacheSwitch>
+          </Suspense>
         </div>
-      ) : (
-        <div className="loader">Loading...</div>
-      )}
+        {/* Bottom Space */}
+        <div style={{ height: "25vh" }}></div>{" "}
+      </div>
     </Router>
   );
 }

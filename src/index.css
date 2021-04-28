@@ -46,6 +46,10 @@ hr {
   margin: 16px 0px;
 }
 
+.hidden {
+  display: none;
+}
+
 h1,
 h2,
 h3,
