@@ -72,9 +72,11 @@ const metricsToObject = (metrics: Metric[], level: Metric["level"]) => {
   );
 };
 
-export const getBenchmarkData = async (): Promise<BenchmarkData> => {
+export const getBenchmarkData = async (
+  sha = "master"
+): Promise<BenchmarkData> => {
   const response = await fetch(
-    "https://raw.githubusercontent.com/the-benchmarker/web-frameworks/master/data.min.json"
+    `https://raw.githubusercontent.com/the-benchmarker/web-frameworks/${sha}/data.min.json`
   );
 
   const data: BenchmarkRawData = camelcaseKeys(await response.json(), {
