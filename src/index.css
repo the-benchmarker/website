@@ -1,6 +1,6 @@
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -20,7 +20,7 @@ a {
 
 .nav-links {
   list-style-type: none;
-  padding: 0; 
+  padding: 0;
 }
 
 .nav-links li {
@@ -41,12 +41,15 @@ a {
 }
 
 hr {
-  border: 0; 
+  border: 0;
   border-top: 1px solid lightgray;
-  margin: 24px 0px;
+  margin: 16px 0px;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-weight: 300;
   line-height: 1.2;
 }
@@ -71,15 +74,15 @@ h4 {
   h1 {
     font-size: 2rem;
   }
-  
+
   h2 {
     font-size: 1.75rem;
   }
-  
+
   h3 {
     font-size: 1.5rem;
   }
-  
+
   h4 {
     font-size: 1.25rem;
   }
