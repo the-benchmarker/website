@@ -54,7 +54,7 @@ function NavBar({ onHistoryChange }: Props) {
           </li>
           <li>
             <a
-              href="https://github.com/SuspiciousLookingOwl/web-frameworks-benchmark"
+              href="https://github.com/the-benchmarker/website"
               target="_blank"
               rel="noreferrer"
             >

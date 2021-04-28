@@ -25,7 +25,11 @@ export default function Home({ updateDate }: Props) {
           their GitHub repository
         </a>
         . This website is open source, you can check the source code{" "}
-        <a href="https://github.com/SuspiciousLookingOwl/web-frameworks-benchmark">
+        <a
+          target="_blank"
+          href="https://github.com/the-benchmarker/website"
+          rel="noreferrer"
+        >
           here
         </a>
         .
