@@ -141,6 +141,7 @@ function BenchmarkResult({ benchmarks }: Props) {
     );
 
     setTableData(filteredBenchmark);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frameworks, languages, benchmarks]);
 
   return (
