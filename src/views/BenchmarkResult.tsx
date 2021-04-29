@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import Select from "react-select";
-import DataTable, { IDataTableColumn } from "react-data-table-component";
+import DataTable, { TableColumn } from "react-data-table-component";
 import { isMobile } from "react-device-detect";
-import { StringParam, useQueryParams } from "use-query-params";
+import {
+  BooleanParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "use-query-params";
 import FrameworkSelector, {
   SelectOptionFramework,
 } from "../components/FrameworkSelector";
@@ -26,13 +31,15 @@ const metricOptions = COMPARED_METRICS.map((m) => {
   };
 });
 
-const staticColumns: IDataTableColumn<Benchmark>[] = [
+const staticColumns: TableColumn<Benchmark>[] = [
   {
+    id: "language",
     name: "Language",
     selector: ({ language }) => `${language.label} (${language.version})`,
     sortable: true,
   },
   {
+    id: "framework",
     name: "Framework",
     selector: ({ framework }) => framework.version,
     cell: ({ framework }) => (
@@ -56,11 +63,13 @@ function BenchmarkResult({ benchmarks }: Props) {
   const [frameworks, setFrameworks] = useState<SelectOptionFramework[]>([]);
   const [tableData, setTableData] = useState<Benchmark[]>([]);
   const [metric, setMetric] = useState<SelectOption | null>(defaultMetric);
-  const [columns, setColumns] = useState<IDataTableColumn<Benchmark>[]>([]);
+  const [columns, setColumns] = useState<TableColumn<Benchmark>[]>([]);
   const [query, setQuery] = useQueryParams({
     f: CommaArrayParam, // frameworks
     l: CommaArrayParam, // languages
     metric: StringParam,
+    order_by: withDefault(StringParam, "64"),
+    asc: withDefault(BooleanParam, false),
   });
 
   const getLanguagesOptions = (): SelectOption[] => {
@@ -92,6 +101,18 @@ function BenchmarkResult({ benchmarks }: Props) {
     setMetric(option);
   };
 
+  // Handler for table sort
+  const onTableSort = (
+    column: TableColumn<Benchmark>,
+    direction: "asc" | "desc"
+  ) => {
+    setQuery({
+      ...query,
+      order_by: column.id?.toString(),
+      asc: direction === "asc",
+    });
+  };
+
   // set languages and frameworks select options value from query params
   useEffect(() => {
     const languages = query.l || [];
@@ -117,6 +138,7 @@ function BenchmarkResult({ benchmarks }: Props) {
     // create columns based on selected metric
     const dynamicColumns = CONCURRENCIES.map((c) => {
       return {
+        id: `level${c}`,
         name: `${title} (${c})`,
         selector: (b: Benchmark) => b[`level${c}` as const][key],
         sortable: true,
@@ -161,7 +183,6 @@ function BenchmarkResult({ benchmarks }: Props) {
       <h3 className="text-center" id="title">
         Benchmark Result
       </h3>
-
       <Select
         isMulti
         value={languages}
@@ -169,7 +190,6 @@ function BenchmarkResult({ benchmarks }: Props) {
         options={getLanguagesOptions()}
         placeholder="Filter Languages..."
       />
-
       <div className="pt-md">
         <FrameworkSelector
           value={frameworks}
@@ -178,7 +198,6 @@ function BenchmarkResult({ benchmarks }: Props) {
           onChange={setFrameworks}
         />
       </div>
-
       <div style={{ maxWidth: "480px" }}>
         <Select
           onChange={onMetricChange}
@@ -188,7 +207,6 @@ function BenchmarkResult({ benchmarks }: Props) {
           className="pt-md"
         />
       </div>
-
       <DataTable
         columns={columns}
         pagination={isMobile}
@@ -196,8 +214,10 @@ function BenchmarkResult({ benchmarks }: Props) {
         paginationRowsPerPageOptions={[25, 50, 100]}
         paginationComponentOptions={{ selectAllRowsItem: true }}
         onChangePage={scrollToTitle}
+        onSort={onTableSort}
         data={tableData}
-        defaultSortField="Requests / Second (64)"
+        defaultSortFieldId={query.order_by}
+        defaultSortAsc={query.asc}
         noHeader
         className="pt-md"
       />
