@@ -21,13 +21,14 @@ interface Styles<T = any> {
 }
 
 export interface SelectOptionFramework extends SelectOption {
-  color: string;
+  color?: string;
 }
 
 interface Props {
   options: SelectOption[];
   onChange: (options: SelectOptionFramework[]) => void;
   defaultValue?: number[];
+  value?: SelectOptionFramework[];
   disableStyle?: boolean;
 }
 
@@ -35,7 +36,7 @@ interface Props {
 const styles: Styles<SelectOptionFramework> = {
   control: (styles) => ({ ...styles, backgroundColor: "white" }),
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-    const color = chroma(data.color);
+    const color = chroma(data.color!);
     return {
       ...styles,
       backgroundColor: isDisabled
@@ -62,7 +63,7 @@ const styles: Styles<SelectOptionFramework> = {
     };
   },
   multiValue: (styles, { data }) => {
-    const color = chroma(data.color);
+    const color = chroma(data.color!);
     return {
       ...styles,
       backgroundColor: color.alpha(0.1).css(),
@@ -86,6 +87,7 @@ function FrameworkSelector({
   options,
   onChange,
   defaultValue = [],
+  value = [],
   disableStyle = false,
 }: Props) {
   const onOptionsChange = (data: any) => {
@@ -96,6 +98,7 @@ function FrameworkSelector({
     <Select
       key={defaultValue.join(",")}
       isMulti
+      value={value}
       defaultValue={defaultValue.reduce((filtered, id) => {
         const option = options.find((o) => o.value === id);
         if (option) filtered.push(option);
