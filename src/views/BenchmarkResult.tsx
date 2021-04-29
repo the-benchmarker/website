@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import DataTable, { IDataTableColumn } from "react-data-table-component";
 import { isMobile } from "react-device-detect";
-import { useQueryParams } from "use-query-params";
+import { StringParam, useQueryParams } from "use-query-params";
 import FrameworkSelector, {
   SelectOptionFramework,
 } from "../components/FrameworkSelector";
@@ -60,6 +60,7 @@ function BenchmarkResult({ benchmarks }: Props) {
   const [query, setQuery] = useQueryParams({
     f: CommaArrayParam, // frameworks
     l: CommaArrayParam, // languages
+    metric: StringParam,
   });
 
   const getLanguagesOptions = (): SelectOption[] => {
@@ -82,16 +83,27 @@ function BenchmarkResult({ benchmarks }: Props) {
     document.getElementById("title")!.scrollIntoView();
   };
 
+  // Handler for metric selector
+  const onMetricChange = (option: SelectOption | null) => {
+    setQuery({
+      ...query,
+      metric: option?.value.toString(),
+    });
+    setMetric(option);
+  };
+
   // set languages and frameworks select options value from query params
   useEffect(() => {
     const languages = query.l || [];
     const frameworks = query.f || [];
+    const metric = query.metric || defaultMetric.value;
     setLanguages(
       getLanguagesOptions().filter((l) => languages.includes(`${l.value}`))
     );
     setFrameworks(
       getFrameworkOptions().filter((f) => frameworks.includes(`${f.value}`))
     );
+    setMetric(metricOptions.find((m) => m.value === metric) || null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [benchmarks]);
 
@@ -169,8 +181,8 @@ function BenchmarkResult({ benchmarks }: Props) {
 
       <div style={{ maxWidth: "480px" }}>
         <Select
-          onChange={setMetric}
-          defaultValue={defaultMetric}
+          onChange={onMetricChange}
+          value={metric}
           options={metricOptions}
           placeholder="Select Metric..."
           className="pt-md"
