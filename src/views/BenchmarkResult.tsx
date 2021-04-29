@@ -68,7 +68,7 @@ function BenchmarkResult({ benchmarks }: Props) {
     f: CommaArrayParam, // frameworks
     l: CommaArrayParam, // languages
     metric: StringParam,
-    order_by: withDefault(StringParam, "64"),
+    order_by: withDefault(StringParam, "level64"),
     asc: withDefault(BooleanParam, false),
   });
 
