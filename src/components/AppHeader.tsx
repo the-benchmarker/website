@@ -66,6 +66,8 @@ function NavBar({ onHistoryChange }: Props) {
         <div className="container" style={{ maxWidth: "480px" }}>
           <Select
             defaultValue={master}
+            isSearchable={false}
+            className="text-left"
             options={historyOptions}
             onChange={(v) =>
               v ? onHistoryChange(v.value.toString()) : undefined
