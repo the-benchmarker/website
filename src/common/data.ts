@@ -16,7 +16,7 @@ export const COMPARED_METRICS: ComparedMetric[] = [
   {
     key: "totalRequestsPerS",
     title: "Requests / Second",
-    longTitle: "Total Request per Second",
+    longTitle: "Total Requests per Second",
     format: formatThousandSeparated,
     round: true,
   },
