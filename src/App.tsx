@@ -2,7 +2,11 @@ import React, { useEffect, useState, lazy, Suspense } from "react";
 import chroma from "chroma-js";
 import { Benchmark, getBenchmarkData } from "./api";
 import randomColor from "randomcolor";
-import { BrowserRouter as Router } from "react-router-dom";
+import {
+  QueryParamProvider,
+  transformSearchStringJsonSafe,
+} from "use-query-params";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import CacheRoute, { CacheSwitch } from "react-router-cache-route";
 
 import Home from "./views/Home";
@@ -52,28 +56,35 @@ function App() {
 
   return (
     <Router>
-      <div>
-        <AppHeader onHistoryChange={fetchBenchmarkData} />
-        <ScrollToTop />
-        {isLoading ? <div className="loader">Loading...</div> : undefined}
-        <div className={`container ${isLoading ? "hidden" : ""}`}>
-          <Suspense fallback={<div className="loader">Loading...</div>}>
-            <CacheSwitch>
-              <CacheRoute exact path="/">
-                <Home updateDate={updatedAt} />
-              </CacheRoute>
-              <CacheRoute exact path="/result">
-                <BenchmarkResult benchmarks={benchmarks} />
-              </CacheRoute>
-              <CacheRoute path="/compare">
-                <CompareFrameworks benchmarks={benchmarks} />
-              </CacheRoute>
-            </CacheSwitch>
-          </Suspense>
+      <QueryParamProvider
+        ReactRouterRoute={Route}
+        stringifyOptions={{
+          transformSearchString: transformSearchStringJsonSafe,
+        }}
+      >
+        <div>
+          <AppHeader onHistoryChange={fetchBenchmarkData} />
+          <ScrollToTop />
+          {isLoading ? <div className="loader">Loading...</div> : undefined}
+          <div className={`container ${isLoading ? "hidden" : ""}`}>
+            <Suspense fallback={<div className="loader">Loading...</div>}>
+              <CacheSwitch>
+                <CacheRoute exact path="/">
+                  <Home updateDate={updatedAt} />
+                </CacheRoute>
+                <CacheRoute exact path="/result">
+                  <BenchmarkResult benchmarks={benchmarks} />
+                </CacheRoute>
+                <CacheRoute path="/compare">
+                  <CompareFrameworks benchmarks={benchmarks} />
+                </CacheRoute>
+              </CacheSwitch>
+            </Suspense>
+          </div>
+          {/* Bottom Space */}
+          <div style={{ height: "25vh" }}></div>{" "}
         </div>
-        {/* Bottom Space */}
-        <div style={{ height: "25vh" }}></div>{" "}
-      </div>
+      </QueryParamProvider>
     </Router>
   );
 }

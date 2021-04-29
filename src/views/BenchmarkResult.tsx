@@ -2,9 +2,17 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import DataTable, { IDataTableColumn } from "react-data-table-component";
 import { isMobile } from "react-device-detect";
-import FrameworkSelector from "../components/FrameworkSelector";
+import { useQueryParams } from "use-query-params";
+import FrameworkSelector, {
+  SelectOptionFramework,
+} from "../components/FrameworkSelector";
 import { Benchmark, MetricTypes } from "../api";
-import { COMPARED_METRICS, CONCURRENCIES, SelectOption } from "../common";
+import {
+  CommaArrayParam,
+  COMPARED_METRICS,
+  CONCURRENCIES,
+  SelectOption,
+} from "../common";
 
 const defaultMetric = {
   label: "Requests / Second",
@@ -45,16 +53,49 @@ interface Props {
 
 function BenchmarkResult({ benchmarks }: Props) {
   const [languages, setLanguages] = useState<SelectOption[]>([]);
-  const [frameworks, setFrameworks] = useState<SelectOption[]>([]);
+  const [frameworks, setFrameworks] = useState<SelectOptionFramework[]>([]);
   const [tableData, setTableData] = useState<Benchmark[]>([]);
   const [metric, setMetric] = useState<SelectOption | null>(defaultMetric);
   const [columns, setColumns] = useState<IDataTableColumn<Benchmark>[]>([]);
+  const [query, setQuery] = useQueryParams({
+    f: CommaArrayParam, // frameworks
+    l: CommaArrayParam, // languages
+  });
+
+  const getLanguagesOptions = (): SelectOption[] => {
+    return [...new Set(benchmarks.map((b) => b.language))].map(
+      ({ label, version }) => ({
+        value: label,
+        label: `${label} (${version})`,
+      })
+    );
+  };
+
+  const getFrameworkOptions = (): SelectOptionFramework[] => {
+    return benchmarks.map((b) => ({
+      value: b.framework.label,
+      label: `${b.language.label} - ${b.framework.label} (${b.framework.version})`,
+    }));
+  };
 
   const scrollToTitle = () => {
     document.getElementById("title")!.scrollIntoView();
   };
 
-  // On metric change
+  // set languages and frameworks select options value from query params
+  useEffect(() => {
+    const languages = query.l || [];
+    const frameworks = query.f || [];
+    setLanguages(
+      getLanguagesOptions().filter((l) => languages.includes(`${l.value}`))
+    );
+    setFrameworks(
+      getFrameworkOptions().filter((f) => frameworks.includes(`${f.value}`))
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [benchmarks]);
+
+  // on metric change
   useEffect(() => {
     // Get metric data by metric key
     const { key, title, format, round } = COMPARED_METRICS.find(
@@ -81,16 +122,22 @@ function BenchmarkResult({ benchmarks }: Props) {
     setColumns([...staticColumns, ...dynamicColumns]);
   }, [metric]);
 
-  // On filter frameworks or languages change
+  // on filter frameworks or languages change
   useEffect(() => {
-    if (!benchmarks) return;
+    if (benchmarks.length) {
+      setQuery({
+        l: languages.length ? languages.map((l) => `${l.value}`) : undefined,
+        f: frameworks.length ? frameworks.map((f) => `${f.value}`) : undefined,
+      });
+    }
+
     if (!frameworks.length && !languages.length)
       return setTableData(benchmarks);
 
     const filteredBenchmark = benchmarks.filter(
       (b) =>
         languages.map((l) => l.value).includes(b.language.label) ||
-        frameworks.map((f) => f.value).includes(b.framework.id)
+        frameworks.map((f) => f.value).includes(b.framework.label)
     );
 
     setTableData(filteredBenchmark);
@@ -104,22 +151,16 @@ function BenchmarkResult({ benchmarks }: Props) {
 
       <Select
         isMulti
+        value={languages}
         onChange={(data) => setLanguages(data as SelectOption[])}
-        options={[...new Set(benchmarks.map((b) => b.language))].map(
-          ({ label, version }) => ({
-            value: label,
-            label: `${label} (${version})`,
-          })
-        )}
+        options={getLanguagesOptions()}
         placeholder="Filter Languages..."
       />
 
       <div className="pt-md">
         <FrameworkSelector
-          options={benchmarks.map((b) => ({
-            value: b.id,
-            label: `${b.language.label} - ${b.framework.label} (${b.framework.version})`,
-          }))}
+          value={frameworks}
+          options={getFrameworkOptions()}
           disableStyle
           onChange={setFrameworks}
         />
