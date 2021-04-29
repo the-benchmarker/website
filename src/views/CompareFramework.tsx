@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 import { ChartData, ChartOptions } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { useHistory } from "react-router-dom";
+import { useQueryParam } from "use-query-params";
 import { isMobile } from "react-device-detect";
 
 import FrameworkSelector, {
   SelectOptionFramework,
 } from "../components/FrameworkSelector";
 import { BenchmarkDataSet } from "../App";
-import useQuery from "../hooks/useQuery";
-import { COMPARED_METRICS, CONCURRENCIES, ComparedMetric } from "../common";
+import {
+  COMPARED_METRICS,
+  CONCURRENCIES,
+  ComparedMetric,
+  CommaArrayParam,
+} from "../common";
 
 interface Props {
   benchmarks: BenchmarkDataSet[];
@@ -19,9 +23,16 @@ type ChartsData = (ComparedMetric & { chartData: ChartData })[];
 
 function CompareFramework({ benchmarks }: Props) {
   const [charts, setCharts] = useState<ChartsData>([]);
-  const [defaultFrameworkIds, setDefaultFrameworkIds] = useState<number[]>([]);
-  const history = useHistory();
-  const query = useQuery();
+  const [frameworks, setFrameworks] = useState<SelectOptionFramework[]>([]);
+  const [query, setQuery] = useQueryParam("f", CommaArrayParam);
+
+  const getFrameworkOptions = (): SelectOptionFramework[] => {
+    return benchmarks.map((b) => ({
+      value: b.framework.label,
+      label: `${b.language.label} - ${b.framework.label} (${b.framework.version})`,
+      color: b.color,
+    }));
+  };
 
   const updateCharts = (benchmarks: BenchmarkDataSet[]) => {
     if (!benchmarks.length) return setCharts([]);
@@ -54,9 +65,10 @@ function CompareFramework({ benchmarks }: Props) {
   useEffect(() => {
     if (!benchmarks.length) return;
 
-    // Get query parameter
-    const frameworks = query.get("f")?.split(",");
-    if (!frameworks) return;
+    const frameworks = query || [];
+    setFrameworks(
+      getFrameworkOptions().filter((f) => frameworks.includes(`${f.value}`))
+    );
 
     // Find benchmark by framework name
     const filteredBenchmark = frameworks.reduce((filtered, name) => {
@@ -65,39 +77,38 @@ function CompareFramework({ benchmarks }: Props) {
       return filtered;
     }, [] as BenchmarkDataSet[]);
 
-    setDefaultFrameworkIds(filteredBenchmark.map((b) => b.id));
     updateCharts(filteredBenchmark);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [benchmarks]);
 
   // FrameworkSelector onChange handler
-  const onFrameworkChange = (selectedOptions: SelectOptionFramework[]) => {
+  useEffect(() => {
+    if (benchmarks.length)
+      setQuery(
+        frameworks.length ? frameworks.map((f) => `${f.value}`) : undefined
+      );
+
     // Get benchmark data from selected frameworks id
-    const filteredBenchmark = selectedOptions.map(
-      (option) => benchmarks.find((b) => b.id === option.value)!
+    const filteredBenchmark = frameworks.map(
+      (f) => benchmarks.find((b) => b.framework.label === f.value)!
     );
 
-    // Set query parameter
-    const frameworks = filteredBenchmark
-      .map((b) => b.framework.label)
-      .join(",");
-    history.replace(`/compare?${frameworks ? "f=" + frameworks : ""}`);
-
     updateCharts(filteredBenchmark);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [frameworks, benchmarks]);
 
   return (
     <div>
       <h3 className="text-center">Compare Frameworks</h3>
 
       <FrameworkSelector
-        defaultValue={defaultFrameworkIds}
+        value={frameworks}
         options={benchmarks.map((b) => ({
-          value: b.id,
+          value: b.framework.label,
           label: `${b.language.label} - ${b.framework.label} (${b.framework.version})`,
           color: b.color,
         }))}
-        onChange={onFrameworkChange}
+        onChange={setFrameworks}
       />
 
       <div className="pt-md">
