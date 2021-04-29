@@ -143,6 +143,7 @@ function BenchmarkResult({ benchmarks }: Props) {
         paginationComponentOptions={{ selectAllRowsItem: true }}
         onChangePage={scrollToTitle}
         data={tableData}
+        defaultSortField="Requests / Second (64)"
         noHeader
         className="pt-md"
       />
