@@ -51,7 +51,10 @@ function App() {
   };
 
   useEffect(() => {
-    fetchBenchmarkData("master", true);
+    fetchBenchmarkData(
+      new URLSearchParams(window.location.search).get("sha") ?? "master",
+      true
+    );
   }, []);
 
   return (
