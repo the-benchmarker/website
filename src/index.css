@@ -10,6 +10,10 @@ body {
   text-align: center !important;
 }
 
+.text-left {
+  text-align: left !important;
+}
+
 a {
   color: #1c73bb;
 }
