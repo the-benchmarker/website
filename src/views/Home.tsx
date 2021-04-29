@@ -16,13 +16,13 @@ export default function Home({ updateDate }: Props) {
         >
           The Benchmarker
         </a>
-        . You can check their source code on{" "}
+        . You can check out the benchmark source code on{" "}
         <a
           target="_blank"
           href="https://github.com/the-benchmarker/web-frameworks"
           rel="noreferrer"
         >
-          their GitHub repository
+          this GitHub repository
         </a>
         . This website is open source, you can check the source code{" "}
         <a
@@ -86,9 +86,6 @@ export default function Home({ updateDate }: Props) {
           </li>
           <li>
             <code>jq</code>, processing <code>docker</code> metadata
-          </li>
-          <li>
-            <code>docker-machine</code> if you are on <code>macos</code>
           </li>
         </ul>
       </section>
