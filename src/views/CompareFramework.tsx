@@ -66,16 +66,18 @@ function CompareFramework({ benchmarks }: Props) {
     if (!benchmarks.length) return;
 
     const frameworks = query || [];
+    const frameworkOptions = getFrameworkOptions();
+
     setFrameworks(
-      getFrameworkOptions().filter((f) => frameworks.includes(`${f.value}`))
+      frameworks
+        .map((f) => frameworkOptions.find(({ value }) => f === value))
+        .filter((b): b is SelectOptionFramework => !!b)
     );
 
     // Find benchmark by framework name
-    const filteredBenchmark = frameworks.reduce((filtered, name) => {
-      const benchmark = benchmarks.find((b) => b.framework.label === name);
-      if (benchmark) filtered.push(benchmark);
-      return filtered;
-    }, [] as BenchmarkDataSet[]);
+    const filteredBenchmark = frameworks
+      .map((f) => benchmarks.find((b) => b.framework.label === f))
+      .filter((b): b is BenchmarkDataSet => !!b);
 
     updateCharts(filteredBenchmark);
     // eslint-disable-next-line react-hooks/exhaustive-deps
