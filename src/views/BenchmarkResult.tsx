@@ -203,6 +203,7 @@ function BenchmarkResult({ benchmarks }: Props) {
           onChange={onMetricChange}
           value={metric}
           options={metricOptions}
+          isSearchable={false}
           placeholder="Select Metric..."
           className="pt-md"
         />
