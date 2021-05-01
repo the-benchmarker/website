@@ -156,7 +156,7 @@ h4 {
 }
 
 .align-middle {
-  vertical-align: "middle";
+  vertical-align: middle !important;
 }
 
 .loader,
