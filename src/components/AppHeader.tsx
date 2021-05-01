@@ -50,7 +50,7 @@ function NavBar({ onHistoryChange }: Props) {
               target="_blank"
               rel="noreferrer"
             >
-              Github
+              GitHub
             </a>
           </li>
         </ul>
