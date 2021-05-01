@@ -8,7 +8,7 @@ function HttpErrorsTooltip(errorsString: string) {
   return (
     <div>
       HTTP Errors:
-      <ul>
+      <ul className="pl-lg">
         {level64 ? <li>64: {level64}</li> : undefined}
         {level256 ? <li>256: {level256}</li> : undefined}
         {level512 ? <li>512: {level512}</li> : undefined}
