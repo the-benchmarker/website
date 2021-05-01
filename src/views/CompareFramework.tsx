@@ -115,7 +115,7 @@ function CompareFramework({ benchmarks }: Props) {
 
       <div className="pt-md">
         {charts.map((c, i) => (
-          <div className="pb-lg" key={i}>
+          <div className="pb-xl" key={i}>
             <h4 id={c.key} className="text-center">
               <a className="decoration-none" href={`#${c.key}`}>
                 {c.longTitle || c.title}

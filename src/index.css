@@ -128,7 +128,7 @@ h4 {
   }
 }
 
-.pb-lg {
+.pb-xl {
   padding-bottom: 36px;
 }
 
@@ -136,8 +136,8 @@ h4 {
   padding-top: 12px;
 }
 
-.pt-lg {
-  padding-top: 36px;
+.pl-lg {
+  padding-left: 16px;
 }
 
 .my-none {
