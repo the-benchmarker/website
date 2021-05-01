@@ -145,6 +145,16 @@ h4 {
   margin-bottom: 0px !important;
 }
 
+.tooltip-danger {
+  margin-left: 8px;
+  margin-right: 8px;
+  background: red;
+  padding: 0px 4px;
+  border-radius: 100%;
+  font-size: 6px;
+  cursor: pointer;
+}
+
 .loader,
 .loader:after {
   border-radius: 50%;
