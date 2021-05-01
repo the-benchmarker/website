@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import DataTable, { TableColumn } from "react-data-table-component";
 import { isMobile } from "react-device-detect";
+import ReactTooltip from "react-tooltip";
 import {
   BooleanParam,
   StringParam,
@@ -11,6 +12,7 @@ import {
 import FrameworkSelector, {
   SelectOptionFramework,
 } from "../components/FrameworkSelector";
+import HttpErrorsTooltip from "../components/HttpErrorsTooltip";
 import { Benchmark, MetricTypes } from "../api";
 import {
   CommaArrayParam,
@@ -42,14 +44,36 @@ const staticColumns: TableColumn<Benchmark>[] = [
     id: "framework",
     name: "Framework",
     selector: ({ framework }) => framework.version,
-    cell: ({ framework }) => (
-      <div>
-        <a href={framework.website} target="_blank" rel="noreferrer">
-          {framework.label}
-        </a>{" "}
-        ({framework.version})
-      </div>
-    ),
+    cell: (b) => {
+      const id = `tooltip-${b.id}`;
+      const httpErrors = [
+        b.level64.httpErrors,
+        b.level256.httpErrors,
+        b.level512.httpErrors,
+      ];
+
+      return (
+        <div>
+          <a href={b.framework.website} target="_blank" rel="noreferrer">
+            {b.framework.label}
+          </a>{" "}
+          ({b.framework.version})
+          {httpErrors.some((e) => e > 0) ? (
+            <span
+              className="tooltip-danger"
+              id={id}
+              data-tip={JSON.stringify(httpErrors)}
+              onMouseEnter={() => {
+                ReactTooltip.show(document.getElementById(id)!);
+              }}
+              onMouseLeave={() =>
+                ReactTooltip.hide(document.getElementById(id)!)
+              }
+            />
+          ) : undefined}
+        </div>
+      );
+    },
     sortable: true,
   },
 ];
@@ -208,6 +232,7 @@ function BenchmarkResult({ benchmarks }: Props) {
           className="pt-md"
         />
       </div>
+      <ReactTooltip place="right" getContent={HttpErrorsTooltip} />
       <DataTable
         columns={columns}
         pagination={isMobile}
