@@ -4,32 +4,24 @@ import Select from "react-select";
 import { getBenchmarkHistories } from "../api";
 import { SelectOption } from "../common";
 
-const master: SelectOption = {
-  label: "Latest",
-  value: "master",
-};
-
 interface Props {
   onHistoryChange: (sha: string) => void;
 }
 
 function NavBar({ onHistoryChange }: Props) {
-  const [historyOptions, setHistoryOptions] = useState<SelectOption[]>([
-    master,
-  ]);
+  const [historyOptions, setHistoryOptions] = useState<SelectOption[]>([]);
 
   const fetchBenchmarkHistories = async () => {
     // only fetch once
     if (historyOptions.length > 1) return;
 
     const benchmarkHistories = await getBenchmarkHistories();
-    setHistoryOptions([
-      ...historyOptions,
-      ...benchmarkHistories.map((h) => ({
-        label: h.date,
+    setHistoryOptions(
+      benchmarkHistories.map((h, i) => ({
+        label: (i === 0 ? "Latest — " : "") + h.date,
         value: h.sha,
-      })),
-    ]);
+      }))
+    );
   };
 
   useEffect(() => {
@@ -65,9 +57,10 @@ function NavBar({ onHistoryChange }: Props) {
 
         <div className="container" style={{ maxWidth: "480px" }}>
           <Select
-            defaultValue={master}
+            key={historyOptions.length}
+            defaultValue={historyOptions[0]}
             isSearchable={false}
-            className="text-left"
+            className={`text-left ${!historyOptions.length ? "hidden" : ""}`}
             options={historyOptions}
             onChange={(v) =>
               v ? onHistoryChange(v.value.toString()) : undefined

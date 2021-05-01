@@ -113,19 +113,15 @@ export const getBenchmarkData = async (
   };
 };
 
-export const getBenchmarkHistories = async (
-  removeFirst = true
-): Promise<BenchmarkHistory[]> => {
+export const getBenchmarkHistories = async (): Promise<BenchmarkHistory[]> => {
   const response = await fetch(
     "https://api.github.com/repos/the-benchmarker/web-frameworks/commits?path=data.min.json"
   );
 
   const data: BenchmarkHistoryRawDataMin[] = await response.json();
 
-  return data
-    .map((r) => ({
-      sha: r.sha,
-      date: `${r.commit.author.date.split("T")[0]} (${r.sha.substring(0, 7)})`,
-    }))
-    .slice(removeFirst ? 1 : 0);
+  return data.map((r) => ({
+    sha: r.sha,
+    date: `${r.commit.author.date.split("T")[0]} (${r.sha.substring(0, 7)})`,
+  }));
 };
