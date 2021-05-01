@@ -155,6 +155,10 @@ h4 {
   cursor: pointer;
 }
 
+.align-middle {
+  vertical-align: "middle";
+}
+
 .loader,
 .loader:after {
   border-radius: 50%;

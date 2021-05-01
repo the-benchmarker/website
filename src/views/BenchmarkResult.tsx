@@ -60,7 +60,7 @@ const staticColumns: TableColumn<Benchmark>[] = [
           ({b.framework.version})
           {httpErrors.some((e) => e > 0) ? (
             <span
-              className="tooltip-danger"
+              className="tooltip-danger align-middle"
               id={id}
               data-tip={JSON.stringify(httpErrors)}
               onMouseEnter={() => {
