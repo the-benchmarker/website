@@ -1,7 +1,6 @@
 import React, { useEffect, useState, lazy, Suspense } from "react";
 import chroma from "chroma-js";
 import { Benchmark, getBenchmarkData } from "./api";
-import randomColor from "randomcolor";
 import {
   QueryParamProvider,
   transformSearchStringJsonSafe,
@@ -30,18 +29,15 @@ function App() {
   const fetchBenchmarkData = async (sha = "master", updateDate = false) => {
     setIsLoading(true);
     const { data: benchmarks, updatedAt } = await getBenchmarkData(sha);
-    const colors = randomColor({
-      count: benchmarks.length,
-      luminosity: "dark",
-    });
 
     // Map data, add additional property for chart datasets
     const data: BenchmarkDataSet[] = benchmarks.map((b, i) => {
+      const color = chroma.random();
       return {
         ...b,
-        color: colors[i],
+        color: color.darken(1).hex(),
         label: `${b.framework.label} (${b.framework.version})`,
-        backgroundColor: chroma(colors[i]).brighten(1).hex(),
+        backgroundColor: color.brighten(0.5).hex(),
       };
     });
 
