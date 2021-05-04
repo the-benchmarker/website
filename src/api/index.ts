@@ -3,6 +3,7 @@ import camelcaseKeys from "camelcase-keys";
 interface BenchmarkData {
   data: Benchmark[];
   updatedAt: string;
+  hardware: Hardware;
 }
 
 interface BenchmarkHistory {
@@ -24,6 +25,7 @@ interface BenchmarkRawData {
   frameworks: Framework[];
   languages: Language[];
   updatedAt: string;
+  hardware: Hardware;
 }
 
 interface BenchmarkHistoryRawDataMin {
@@ -53,6 +55,19 @@ interface Metric {
   label: MetricTypes;
   value: number;
   frameworkId: number;
+}
+
+interface Hardware {
+  cpus: number;
+  memory: number;
+  cpuName: string;
+  os: {
+    sysname: string;
+    nodename: string;
+    release: string;
+    version: string;
+    machine: string;
+  };
 }
 
 export type MetricTypes =
@@ -99,6 +114,7 @@ export const getBenchmarkData = async (
 
   return {
     updatedAt: data.updatedAt,
+    hardware: data.hardware,
     data: data.frameworks.map((f) => {
       const metrics = data.metrics.filter((m) => m.frameworkId === f.id);
       return {
