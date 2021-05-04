@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
+import { Hardware } from "../api";
 
 interface Props {
   updateDate: string;
+  hardware?: Hardware;
 }
 
-export default function Home({ updateDate }: Props) {
+export default function Home({ updateDate, hardware }: Props) {
   return (
     <div className="dense-container">
       <p>
@@ -100,15 +102,18 @@ export default function Home({ updateDate }: Props) {
           (threads: 8, timeout: 8, duration: 15 seconds) with <b>64</b>,{" "}
           <b>256</b>, and <b>512</b> concurrency.
         </p>
-        <div>
-          Hardware used for the benchmark:
-          <ul>
-            <li>CPU: 8 Cores (AMD FX-8320E Eight-Core Processor)</li>
-            <li>RAM: 16 Gb</li>
-            <li>OS: Fedora</li>
-            <li>Docker version 20.10.5, build 55c4c88</li>
-          </ul>
-        </div>
+        {hardware ? (
+          <div>
+            Hardware used for the benchmark:
+            <ul>
+              <li>
+                CPU: {hardware.cpus} Cores ({hardware.cpuName})
+              </li>
+              <li>RAM: {Math.round(hardware.memory / 1024 / 1024)} GB</li>
+              <li>OS: {hardware.os.sysname}</li>
+            </ul>
+          </div>
+        ) : undefined}
       </section>
       <Link to="/result" className=" text-center decoration-none">
         <h4>Check Out the Benchmark Results!</h4>

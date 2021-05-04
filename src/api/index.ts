@@ -3,7 +3,7 @@ import camelcaseKeys from "camelcase-keys";
 interface BenchmarkData {
   data: Benchmark[];
   updatedAt: string;
-  hardware: Hardware;
+  hardware?: Hardware;
 }
 
 interface BenchmarkHistory {
@@ -25,7 +25,7 @@ interface BenchmarkRawData {
   frameworks: Framework[];
   languages: Language[];
   updatedAt: string;
-  hardware: Hardware;
+  hardware?: Hardware;
 }
 
 interface BenchmarkHistoryRawDataMin {
@@ -57,7 +57,7 @@ interface Metric {
   frameworkId: number;
 }
 
-interface Hardware {
+export interface Hardware {
   cpus: number;
   memory: number;
   cpuName: string;
