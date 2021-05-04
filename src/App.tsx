@@ -1,6 +1,6 @@
 import React, { useEffect, useState, lazy, Suspense } from "react";
 import chroma from "chroma-js";
-import { Benchmark, getBenchmarkData } from "./api";
+import { Benchmark, getBenchmarkData, Hardware } from "./api";
 import {
   QueryParamProvider,
   transformSearchStringJsonSafe,
@@ -24,11 +24,14 @@ export type BenchmarkDataSet = Benchmark & {
 function App() {
   const [benchmarks, setBenchmarks] = useState<BenchmarkDataSet[]>([]);
   const [updatedAt, setUpdatedAt] = useState("");
+  const [hardware, setHardware] = useState<Hardware | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchBenchmarkData = async (sha = "master", updateDate = false) => {
     setIsLoading(true);
-    const { data: benchmarks, updatedAt } = await getBenchmarkData(sha);
+    const { data: benchmarks, updatedAt, hardware } = await getBenchmarkData(
+      sha
+    );
 
     // Map data, add additional property for chart datasets
     const data: BenchmarkDataSet[] = benchmarks.map((b, i) => {
@@ -43,6 +46,7 @@ function App() {
 
     setBenchmarks(data);
     if (updateDate) setUpdatedAt(updatedAt.split(" ")[0]);
+    setHardware(hardware);
     setIsLoading(false);
   };
 
@@ -69,7 +73,7 @@ function App() {
             <Suspense fallback={<div className="loader">Loading...</div>}>
               <CacheSwitch>
                 <CacheRoute exact path="/">
-                  <Home updateDate={updatedAt} />
+                  <Home updateDate={updatedAt} hardware={hardware} />
                 </CacheRoute>
                 <CacheRoute exact path="/result">
                   <BenchmarkResult benchmarks={benchmarks} />
