@@ -102,7 +102,7 @@ export default function Home({ updateDate, hardware }: Props) {
           (threads: 8, timeout: 8, duration: 15 seconds) with <b>64</b>,{" "}
           <b>256</b>, and <b>512</b> concurrency.
         </p>
-        {hardware ? (
+        {hardware && (
           <div>
             Hardware used for the benchmark:
             <ul>
@@ -113,7 +113,7 @@ export default function Home({ updateDate, hardware }: Props) {
               <li>OS: {hardware.os.sysname}</li>
             </ul>
           </div>
-        ) : undefined}
+        )}
       </section>
       <Link to="/result" className=" text-center decoration-none">
         <h4>Check Out the Benchmark Results!</h4>

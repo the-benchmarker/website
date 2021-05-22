@@ -58,7 +58,7 @@ const staticColumns: TableColumn<Benchmark>[] = [
             {b.framework.label}
           </a>{" "}
           ({b.framework.version})
-          {httpErrors.some((e) => e > 0) ? (
+          {httpErrors.some((e) => e > 0) && (
             <span
               className="tooltip-danger align-middle"
               id={id}
@@ -70,7 +70,7 @@ const staticColumns: TableColumn<Benchmark>[] = [
                 ReactTooltip.hide(document.getElementById(id)!)
               }
             />
-          ) : undefined}
+          )}
         </div>
       );
     },

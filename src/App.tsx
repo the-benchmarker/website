@@ -29,9 +29,11 @@ function App() {
 
   const fetchBenchmarkData = async (sha = "master", updateDate = false) => {
     setIsLoading(true);
-    const { data: benchmarks, updatedAt, hardware } = await getBenchmarkData(
-      sha
-    );
+    const {
+      data: benchmarks,
+      updatedAt,
+      hardware,
+    } = await getBenchmarkData(sha);
 
     // Map data, add additional property for chart datasets
     const data: BenchmarkDataSet[] = benchmarks.map((b, i) => {
@@ -68,7 +70,7 @@ function App() {
         <div>
           <AppHeader onHistoryChange={fetchBenchmarkData} />
           <ScrollToTop />
-          {isLoading ? <div className="loader">Loading...</div> : undefined}
+          {isLoading && <div className="loader">Loading...</div>}
           <div className={`container ${isLoading ? "hidden" : ""}`}>
             <Suspense fallback={<div className="loader">Loading...</div>}>
               <CacheSwitch>
