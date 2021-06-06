@@ -16,7 +16,7 @@
     "query-string": "^7.0.0",
     "react": "^17.0.2",
     "react-chartjs-2": "^3.0.2",
-    "react-data-table-component": "^7.0.0-alpha-10",
+    "react-data-table-component": "^7.0.0-alpha-11",
     "react-device-detect": "^1.17.0",
     "react-dom": "^17.0.2",
     "react-router-cache-route": "^1.11.0",
