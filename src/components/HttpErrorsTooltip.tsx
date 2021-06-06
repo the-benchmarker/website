@@ -9,9 +9,9 @@ function HttpErrorsTooltip(errorsString: string) {
     <div>
       HTTP Errors:
       <ul className="pl-lg">
-        {level64 && <li>64: {level64}</li>}
-        {level256 && <li>256: {level256}</li>}
-        {level512 && <li>512: {level512}</li>}
+        {!!level64 && <li>64: {level64}</li>}
+        {!!level256 && <li>256: {level256}</li>}
+        {!!level512 && <li>512: {level512}</li>}
       </ul>
     </div>
   );
