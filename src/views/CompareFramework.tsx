@@ -127,6 +127,18 @@ function CompareFramework({ benchmarks }: Props) {
               height={isMobile ? 250 : 100}
               options={
                 {
+                  scales: {
+                    x: {
+                      grid: {
+                        display: false,
+                      },
+                    },
+                    y: {
+                      grid: {
+                        display: false,
+                      },
+                    },
+                  },
                   indexAxis: isMobile ? "y" : "x",
                   animation: isMobile ? false : undefined,
                   plugins: {
