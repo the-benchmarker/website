@@ -3,5 +3,5 @@ export const formatThousandSeparated = (value: number, separator = " ") => {
 };
 
 export const formatLatency = (value: number) => {
-  return `${value} ms`;
+  return `${(value/1000).toFixed(2)} ms`;
 };
