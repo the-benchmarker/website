@@ -1,4 +1,3 @@
-import React from "react";
 import chroma from "chroma-js";
 import Select from "react-select";
 import { SelectOption } from "../common";

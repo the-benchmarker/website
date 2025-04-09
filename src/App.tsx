@@ -1,16 +1,14 @@
-import React, { useEffect, useState, lazy, Suspense } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import chroma from "chroma-js";
 import { Benchmark, getBenchmarkData, Hardware } from "./api";
-import {
-  QueryParamProvider,
-  transformSearchStringJsonSafe,
-} from "use-query-params";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import CacheRoute, { CacheSwitch } from "react-router-cache-route";
+import { BrowserRouter, Route, Routes } from "react-router";
 
 import Home from "./views/Home";
 import AppHeader from "./components/AppHeader";
 import ScrollToTop from "./components/ScrollToTop";
+import { NuqsAdapter } from "nuqs/adapters/react-router/v7";
+
+import KeepAlive from "./components/KeepAlive";
 
 const BenchmarkResult = lazy(() => import("./views/BenchmarkResult"));
 const CompareFrameworks = lazy(() => import("./views/CompareFramework"));
@@ -60,37 +58,39 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <QueryParamProvider
-        ReactRouterRoute={Route}
-        stringifyOptions={{
-          transformSearchString: transformSearchStringJsonSafe,
-        }}
-      >
+    <BrowserRouter>
+      <NuqsAdapter>
         <div>
           <AppHeader onHistoryChange={fetchBenchmarkData} />
           <ScrollToTop />
           {isLoading && <div className="loader">Loading...</div>}
           <div className={`container ${isLoading ? "hidden" : ""}`}>
             <Suspense fallback={<div className="loader">Loading...</div>}>
-              <CacheSwitch>
-                <CacheRoute exact path="/">
-                  <Home updateDate={updatedAt} hardware={hardware} />
-                </CacheRoute>
-                <CacheRoute exact path="/result">
-                  <BenchmarkResult benchmarks={benchmarks} />
-                </CacheRoute>
-                <CacheRoute path="/compare">
-                  <CompareFrameworks benchmarks={benchmarks} />
-                </CacheRoute>
-              </CacheSwitch>
+              <Routes>
+                <Route path="/" element={<KeepAlive />}>
+                  <Route
+                    path=""
+                    element={
+                      <Home updateDate={updatedAt} hardware={hardware} />
+                    }
+                  />
+                  <Route
+                    path="/result"
+                    element={<BenchmarkResult benchmarks={benchmarks} />}
+                  />
+                  <Route
+                    path="/compare"
+                    element={<CompareFrameworks benchmarks={benchmarks} />}
+                  />
+                </Route>
+              </Routes>
             </Suspense>
           </div>
           {/* Bottom Space */}
           <div style={{ height: "25vh" }}></div>{" "}
         </div>
-      </QueryParamProvider>
-    </Router>
+      </NuqsAdapter>
+    </BrowserRouter>
   );
 }
 
