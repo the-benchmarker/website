@@ -3,13 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.11.10",
-    "@testing-library/react": "^11.2.6",
-    "@testing-library/user-event": "^12.8.3",
-    "@types/jest": "^26.0.22",
-    "@types/node": "^12.20.7",
-    "@types/react": "^17.0.3",
-    "@types/react-dom": "^17.0.3",
     "camelcase-keys": "^6.2.2",
     "chart.js": "^3.1.1",
     "chroma-js": "^2.1.1",
@@ -21,19 +14,16 @@
     "react-dom": "^17.0.2",
     "react-router-cache-route": "^1.11.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.3",
     "react-select": "^4.3.0",
     "react-tooltip": "^4.2.18",
     "styled-components": "^5.2.3",
-    "typescript": "^4.2.4",
     "use-query-params": "^1.2.2",
     "web-vitals": "^1.1.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "eslintConfig": {
     "extends": [
@@ -41,23 +31,17 @@
       "react-app/jest"
     ]
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
   "devDependencies": {
     "@types/chart.js": "^2.9.32",
     "@types/chroma-js": "^2.1.3",
+    "@types/node": "^22.14.0",
     "@types/randomcolor": "^0.5.5",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
     "@types/react-router-dom": "^5.1.7",
-    "@types/react-select": "^4.0.14"
+    "@types/react-select": "^4.0.14",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.8.3",
+    "vite": "^6.2.5"
   }
 }
