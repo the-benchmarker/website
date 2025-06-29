@@ -1,6 +1,9 @@
-import chroma from "chroma-js";
+import { colord, extend } from "colord";
 import Select from "react-select";
 import { SelectOption } from "../common";
+import a11yPlugin from "colord/plugins/a11y";
+
+extend([a11yPlugin]);
 
 // Create custom type instead of using StylesConfig<SelectOption, true> because it slows down TypeScript for some reason
 interface Styles<T = any> {
@@ -34,7 +37,7 @@ interface Props {
 const styles: Styles<SelectOptionFramework> = {
   control: (styles) => ({ ...styles, backgroundColor: "white" }),
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-    const color = chroma(data.color!);
+    const color = colord(data.color!);
     return {
       ...styles,
       backgroundColor: isDisabled
@@ -42,12 +45,12 @@ const styles: Styles<SelectOptionFramework> = {
         : isSelected
         ? data.color
         : isFocused
-        ? color.alpha(0.1).css()
+        ? color.alpha(0.1).toHex()
         : null,
       color: isDisabled
         ? "#ccc"
         : isSelected
-        ? chroma.contrast(color, "white") > 2
+        ? colord(color).contrast("#ffffff") > 2
           ? "white"
           : "black"
         : data.color,
@@ -56,15 +59,15 @@ const styles: Styles<SelectOptionFramework> = {
       ":active": {
         ...styles[":active"],
         backgroundColor:
-          !isDisabled && (isSelected ? data.color : color.alpha(0.3).css()),
+          !isDisabled && (isSelected ? data.color : color.alpha(0.3).toHex()),
       },
     };
   },
   multiValue: (styles, { data }) => {
-    const color = chroma(data.color!);
+    const color = colord(data.color!);
     return {
       ...styles,
-      backgroundColor: color.alpha(0.1).css(),
+      backgroundColor: color.alpha(0.1).toHex(),
     };
   },
   multiValueLabel: (styles, { data }) => ({

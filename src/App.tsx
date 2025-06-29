@@ -1,5 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from "react";
-import chroma from "chroma-js";
+import { random as randomColor } from "colord";
 import { Benchmark, getBenchmarkData, Hardware } from "./api";
 import { BrowserRouter, Route, Routes } from "react-router";
 
@@ -35,12 +35,12 @@ function App() {
 
     // Map data, add additional property for chart datasets
     const data: BenchmarkDataSet[] = benchmarks.map((b) => {
-      const color = chroma.random();
+      const color = randomColor();
       return {
         ...b,
-        color: color.darken(1).hex(),
+        color: color.darken(0.2).toHex(),
         label: `${b.framework.label} (${b.framework.version})`,
-        backgroundColor: color.brighten(0.5).hex(),
+        backgroundColor: color.lighten().toHex(),
       };
     });
 
