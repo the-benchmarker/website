@@ -34,7 +34,7 @@ function App() {
     } = await getBenchmarkData(sha);
 
     // Map data, add additional property for chart datasets
-    const data: BenchmarkDataSet[] = benchmarks.map((b, i) => {
+    const data: BenchmarkDataSet[] = benchmarks.map((b) => {
       const color = chroma.random();
       return {
         ...b,

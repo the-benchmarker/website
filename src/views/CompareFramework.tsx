@@ -91,6 +91,7 @@ function CompareFramework({ benchmarks }: Props) {
       .filter((b): b is BenchmarkDataSet => !!b);
 
     updateCharts(filteredBenchmark);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [benchmarks]);
 
   // FrameworkSelector onChange handler
@@ -106,6 +107,7 @@ function CompareFramework({ benchmarks }: Props) {
     );
 
     updateCharts(filteredBenchmark);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frameworks, benchmarks]);
 
   return (
