@@ -231,12 +231,13 @@ function BenchmarkResult({ benchmarks }: Props) {
       </div>
       <Tooltip
         anchorSelect=".tooltip-trigger"
-        style={{ zIndex: "9999" }}
+        style={{ zIndex: 9999 }}
         render={({ content }) => (
           <HttpErrorsTooltip errorsString={content || undefined} />
         )}
       />
 
+      {columns.length > 0 ? (
       <DataTable
         columns={columns}
         pagination={isMobile}
@@ -251,6 +252,7 @@ function BenchmarkResult({ benchmarks }: Props) {
         noHeader
         className="pt-md"
       />
+      ) : null}
     </div>
   );
 }
