@@ -74,12 +74,6 @@ interface Props {
 }
 
 function BenchmarkResult({ benchmarks }: Props) {
-  const [languages, setLanguages] = useState<SelectOption[]>([]);
-  const [frameworks, setFrameworks] = useState<SelectOptionFramework[]>([]);
-  const [tableData, setTableData] = useState<Benchmark[]>([]);
-  const [metric, setMetric] = useState<SelectOption | null>(defaultMetric);
-  const [columns, setColumns] = useState<TableColumn<Benchmark>[]>([]);
-
   const [frameworkParams, setFrameworkParams] = useQueryState(
     "f",
     parseAsArrayOf(parseAsString)
@@ -93,6 +87,16 @@ function BenchmarkResult({ benchmarks }: Props) {
     asc: parseAsBoolean.withDefault(false),
     orderBy: parseAsString.withDefault("level64"),
   });
+
+  const metricValue = metricParam || defaultMetric.value;
+  const initialMetric =
+    metricOptions.find((m) => m.value === metricValue) || defaultMetric;
+
+  const [languages, setLanguages] = useState<SelectOption[]>([]);
+  const [frameworks, setFrameworks] = useState<SelectOptionFramework[]>([]);
+  const [tableData, setTableData] = useState<Benchmark[]>([]);
+  const [metric, setMetric] = useState<SelectOption | null>(initialMetric);
+  const [columns, setColumns] = useState<TableColumn<Benchmark>[]>([]);
 
   const getLanguagesOptions = (): SelectOption[] => {
     return [...new Set(benchmarks.map((b) => b.language))].map(
@@ -238,20 +242,20 @@ function BenchmarkResult({ benchmarks }: Props) {
       />
 
       {columns.length > 0 ? (
-      <DataTable
-        columns={columns}
-        pagination={isMobile}
-        paginationPerPage={25}
-        paginationRowsPerPageOptions={[25, 50, 100]}
-        paginationComponentOptions={{ selectAllRowsItem: true }}
-        onChangePage={scrollToTitle}
-        onSort={onTableSort}
-        data={tableData}
-        defaultSortFieldId={sortParams.orderBy}
-        defaultSortAsc={sortParams.asc}
-        noHeader
-        className="pt-md"
-      />
+        <DataTable
+          columns={columns}
+          pagination={isMobile}
+          paginationPerPage={25}
+          paginationRowsPerPageOptions={[25, 50, 100]}
+          paginationComponentOptions={{ selectAllRowsItem: true }}
+          onChangePage={scrollToTitle}
+          onSort={onTableSort}
+          data={tableData}
+          defaultSortFieldId={sortParams.orderBy}
+          defaultSortAsc={sortParams.asc}
+          noHeader
+          className="pt-md"
+        />
       ) : null}
     </div>
   );
