@@ -2,24 +2,20 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import DataTable, { TableColumn } from "react-data-table-component";
 import { isMobile } from "react-device-detect";
-import ReactTooltip from "react-tooltip";
-import {
-  BooleanParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from "use-query-params";
+import { Tooltip } from "react-tooltip";
 import FrameworkSelector, {
   SelectOptionFramework,
 } from "../components/FrameworkSelector";
 import HttpErrorsTooltip from "../components/HttpErrorsTooltip";
 import { Benchmark, MetricTypes } from "../api";
+import { COMPARED_METRICS, CONCURRENCIES, SelectOption } from "../common";
 import {
-  CommaArrayParam,
-  COMPARED_METRICS,
-  CONCURRENCIES,
-  SelectOption,
-} from "../common";
+  parseAsArrayOf,
+  parseAsBoolean,
+  parseAsString,
+  useQueryState,
+  useQueryStates,
+} from "nuqs";
 
 const defaultMetric = {
   label: "Requests / Second",
@@ -60,15 +56,10 @@ const staticColumns: TableColumn<Benchmark>[] = [
           ({b.framework.version})
           {httpErrors.some((e) => e > 0) && (
             <span
-              className="tooltip-danger align-middle"
+              className="tooltip-danger align-middle tooltip-trigger"
               id={id}
-              data-tip={JSON.stringify(httpErrors)}
-              onMouseEnter={() => {
-                ReactTooltip.show(document.getElementById(id)!);
-              }}
-              onMouseLeave={() =>
-                ReactTooltip.hide(document.getElementById(id)!)
-              }
+              data-tooltip-place="right"
+              data-tooltip-content={JSON.stringify(httpErrors)}
             />
           )}
         </div>
@@ -83,18 +74,29 @@ interface Props {
 }
 
 function BenchmarkResult({ benchmarks }: Props) {
+  const [frameworkParams, setFrameworkParams] = useQueryState(
+    "f",
+    parseAsArrayOf(parseAsString)
+  );
+  const [languageParams, setLanguageParams] = useQueryState(
+    "l",
+    parseAsArrayOf(parseAsString)
+  );
+  const [metricParam, setMetricParam] = useQueryState("metric");
+  const [sortParams, setSortParams] = useQueryStates({
+    asc: parseAsBoolean.withDefault(false),
+    orderBy: parseAsString.withDefault("level64"),
+  });
+
+  const metricValue = metricParam || defaultMetric.value;
+  const initialMetric =
+    metricOptions.find((m) => m.value === metricValue) || defaultMetric;
+
   const [languages, setLanguages] = useState<SelectOption[]>([]);
   const [frameworks, setFrameworks] = useState<SelectOptionFramework[]>([]);
   const [tableData, setTableData] = useState<Benchmark[]>([]);
-  const [metric, setMetric] = useState<SelectOption | null>(defaultMetric);
+  const [metric, setMetric] = useState<SelectOption | null>(initialMetric);
   const [columns, setColumns] = useState<TableColumn<Benchmark>[]>([]);
-  const [query, setQuery] = useQueryParams({
-    f: CommaArrayParam, // frameworks
-    l: CommaArrayParam, // languages
-    metric: StringParam,
-    order_by: withDefault(StringParam, "level64"),
-    asc: withDefault(BooleanParam, false),
-  });
 
   const getLanguagesOptions = (): SelectOption[] => {
     return [...new Set(benchmarks.map((b) => b.language))].map(
@@ -118,10 +120,7 @@ function BenchmarkResult({ benchmarks }: Props) {
 
   // Handler for metric selector
   const onMetricChange = (option: SelectOption | null) => {
-    setQuery({
-      ...query,
-      metric: option?.value.toString(),
-    });
+    setMetricParam(option?.value.toString() || "");
     setMetric(option);
   };
 
@@ -130,18 +129,14 @@ function BenchmarkResult({ benchmarks }: Props) {
     column: TableColumn<Benchmark>,
     direction: "asc" | "desc"
   ) => {
-    setQuery({
-      ...query,
-      order_by: column.id?.toString(),
-      asc: direction === "asc",
-    });
+    setSortParams({ orderBy: column.id?.toString(), asc: direction === "asc" });
   };
 
   // set languages and frameworks select options value from query params
   useEffect(() => {
-    const languages = query.l || [];
-    const frameworks = query.f || [];
-    const metric = query.metric || defaultMetric.value;
+    const languages = languageParams || [];
+    const frameworks = frameworkParams || [];
+    const metric = metricParam || defaultMetric.value;
     setLanguages(
       getLanguagesOptions().filter((l) => languages.includes(`${l.value}`))
     );
@@ -183,10 +178,16 @@ function BenchmarkResult({ benchmarks }: Props) {
   // on filter frameworks or languages change
   useEffect(() => {
     if (benchmarks.length) {
-      setQuery({
-        l: languages.length ? languages.map((l) => `${l.value}`) : undefined,
-        f: frameworks.length ? frameworks.map((f) => `${f.value}`) : undefined,
-      });
+      // setQuery({
+      //   l: languages.length ? languages.map((l) => `${l.value}`) : undefined,
+      //   f: frameworks.length ? frameworks.map((f) => `${f.value}`) : undefined,
+      // });
+      setLanguageParams(
+        languages.length ? languages.map((l) => `${l.value}`) : []
+      );
+      setFrameworkParams(
+        frameworks.length ? frameworks.map((f) => `${f.value}`) : []
+      );
     }
 
     if (!frameworks.length && !languages.length)
@@ -232,21 +233,30 @@ function BenchmarkResult({ benchmarks }: Props) {
           className="pt-md"
         />
       </div>
-      <ReactTooltip place="right" getContent={HttpErrorsTooltip} />
-      <DataTable
-        columns={columns}
-        pagination={isMobile}
-        paginationPerPage={25}
-        paginationRowsPerPageOptions={[25, 50, 100]}
-        paginationComponentOptions={{ selectAllRowsItem: true }}
-        onChangePage={scrollToTitle}
-        onSort={onTableSort}
-        data={tableData}
-        defaultSortFieldId={query.order_by}
-        defaultSortAsc={query.asc}
-        noHeader
-        className="pt-md"
+      <Tooltip
+        anchorSelect=".tooltip-trigger"
+        style={{ zIndex: 9999 }}
+        render={({ content }) => (
+          <HttpErrorsTooltip errorsString={content || undefined} />
+        )}
       />
+
+      {columns.length > 0 ? (
+        <DataTable
+          columns={columns}
+          pagination={isMobile}
+          paginationPerPage={25}
+          paginationRowsPerPageOptions={[25, 50, 100]}
+          paginationComponentOptions={{ selectAllRowsItem: true }}
+          onChangePage={scrollToTitle}
+          onSort={onTableSort}
+          data={tableData}
+          defaultSortFieldId={sortParams.orderBy}
+          defaultSortAsc={sortParams.asc}
+          noHeader
+          className="pt-md"
+        />
+      ) : null}
     </div>
   );
 }

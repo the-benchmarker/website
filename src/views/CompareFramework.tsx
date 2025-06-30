@@ -1,30 +1,39 @@
 import { useEffect, useState } from "react";
-import { ChartData, ChartOptions } from "chart.js";
+import {
+  BarElement,
+  CategoryScale,
+  ChartData,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Tooltip,
+} from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { useQueryParam } from "use-query-params";
 import { isMobile } from "react-device-detect";
 
 import FrameworkSelector, {
   SelectOptionFramework,
 } from "../components/FrameworkSelector";
 import { BenchmarkDataSet } from "../App";
-import {
-  COMPARED_METRICS,
-  CONCURRENCIES,
-  ComparedMetric,
-  CommaArrayParam,
-} from "../common";
+import { COMPARED_METRICS, CONCURRENCIES, ComparedMetric } from "../common";
+import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 
 interface Props {
   benchmarks: BenchmarkDataSet[];
 }
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Legend, Tooltip);
 
 type ChartsData = (ComparedMetric & { chartData: ChartData })[];
 
 function CompareFramework({ benchmarks }: Props) {
   const [charts, setCharts] = useState<ChartsData>([]);
   const [frameworks, setFrameworks] = useState<SelectOptionFramework[]>([]);
-  const [query, setQuery] = useQueryParam("f", CommaArrayParam);
+
+  const [frameworkParams, setFrameworkParams] = useQueryState(
+    "f",
+    parseAsArrayOf(parseAsString).withDefault([])
+  );
 
   const getFrameworkOptions = (): SelectOptionFramework[] => {
     return benchmarks.map((b) => ({
@@ -36,11 +45,13 @@ function CompareFramework({ benchmarks }: Props) {
 
   const updateCharts = (benchmarks: BenchmarkDataSet[]) => {
     if (!benchmarks.length) return setCharts([]);
+
     setCharts(
       COMPARED_METRICS.map((metric) => {
         const labels = CONCURRENCIES.map(
           (c) => `${!isMobile ? "Concurrency " : ""}${c}`
         );
+
         const datasets = benchmarks.map((b) => ({
           ...b,
           data: CONCURRENCIES.map((c) => b[`level${c}` as const][metric.key]),
@@ -65,7 +76,7 @@ function CompareFramework({ benchmarks }: Props) {
   useEffect(() => {
     if (!benchmarks.length) return;
 
-    const frameworks = query || [];
+    const frameworks = frameworkParams || [];
     const frameworkOptions = getFrameworkOptions();
 
     setFrameworks(
@@ -86,8 +97,8 @@ function CompareFramework({ benchmarks }: Props) {
   // FrameworkSelector onChange handler
   useEffect(() => {
     if (benchmarks.length)
-      setQuery(
-        frameworks.length ? frameworks.map((f) => `${f.value}`) : undefined
+      setFrameworkParams(
+        frameworks.length ? frameworks.map((f) => `${f.value}`) : []
       );
 
     // Get benchmark data from selected frameworks id
@@ -122,32 +133,41 @@ function CompareFramework({ benchmarks }: Props) {
               </a>
             </h4>
             <Bar
-              type="bar"
               data={c.chartData}
               height={isMobile ? 250 : 100}
-              options={
-                {
-                  scales: {
-                    x: {
-                      grid: {
-                        display: false,
-                      },
+              options={{
+                scales: {
+                  x: {
+                    grid: {
+                      display: false,
                     },
-                    y: {
-                      grid: {
-                        display: false,
+                  },
+                  y: {
+                    grid: {
+                      display: false,
+                    },
+                  },
+                },
+                indexAxis: isMobile ? "y" : "x",
+                animation: isMobile ? false : undefined,
+                plugins: {
+                  tooltip: {
+                    mode: isMobile ? "index" : "nearest",
+                  },
+                },
+                transitions: {
+                  hide: {
+                    animations: {
+                      x: {
+                        to: 0,
+                      },
+                      y: {
+                        to: 0,
                       },
                     },
                   },
-                  indexAxis: isMobile ? "y" : "x",
-                  animation: isMobile ? false : undefined,
-                  plugins: {
-                    tooltip: {
-                      mode: isMobile ? "index" : "nearest",
-                    },
-                  },
-                } as ChartOptions
-              }
+                },
+              }}
             />
           </div>
         ))}

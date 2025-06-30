@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import Select from "react-select";
 import { getBenchmarkHistories } from "../api";
 import { SelectOption } from "../common";
