@@ -1,3 +1,7 @@
+:root {
+  --color-primary: #1c73bb;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
@@ -6,20 +10,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.text-center {
-  text-align: center !important;
-}
-
-.text-left {
-  text-align: left !important;
-}
-
 a {
-  color: #1c73bb;
-}
-
-.decoration-none {
-  text-decoration: none !important;
+  color: var(--color-primary);
 }
 
 .nav-links {
@@ -28,14 +20,14 @@ a {
 }
 
 .nav-links li {
-  display: inline-block;
-  margin: 0 20px;
+  display: block;
+  margin: 5px 0px;
 }
 
-@media (max-width: 1024px) {
+@media (width >= 1024px) {
   .nav-links li {
-    display: block;
-    margin: 5px 0px;
+    display: inline-block;
+    margin: 0 20px;
   }
 }
 
@@ -50,10 +42,6 @@ hr {
   margin: 24px 0px;
 }
 
-.hidden {
-  display: none;
-}
-
 h1,
 h2,
 h3,
@@ -63,69 +51,124 @@ h4 {
 }
 
 h1 {
-  font-size: 3rem;
-}
-
-h2 {
-  font-size: 2.5rem;
-}
-
-h3 {
   font-size: 2rem;
 }
 
-h4 {
+h2 {
+  font-size: 1.75rem;
+}
+
+h3 {
   font-size: 1.5rem;
 }
 
-@media (max-width: 1024px) {
+h4 {
+  font-size: 1.25rem;
+}
+
+@media (width >= 1024px) {
   h1 {
-    font-size: 2rem;
+    font-size: 3rem;
   }
 
   h2 {
-    font-size: 1.75rem;
+    font-size: 2.5rem;
   }
 
   h3 {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 
   h4 {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
   }
 }
 
 .container {
   width: 100%;
-  margin-right: auto;
-  margin-left: auto;
+  margin-inline: auto;
 }
 
-@media (min-width: 1024px) {
+@media (width >= 1024px) {
   .container {
     max-width: 920px;
   }
+
+  .dense-container {
+    max-width: 66.6667%;
+    margin-inline: auto;
+  }
 }
 
-@media (min-width: 1439px) {
+@media (width >= 1440px) {
   .container {
     max-width: 1140px;
   }
 }
 
-@media (min-width: 1920px) {
+@media (width >= 1920px) {
   .container {
     max-width: 1440px;
   }
 }
 
-@media (min-width: 1024px) {
-  .dense-container {
-    max-width: 66.6% !important;
-    margin-right: auto !important;
-    margin-left: auto !important;
+.tooltip-danger {
+  margin-inline: 8px;
+  background: red;
+  padding: 0px 4px;
+  border-radius: 100%;
+  font-size: 6px;
+  cursor: pointer;
+}
+
+.loader,
+.loader:after {
+  border-radius: 50%;
+  width: 10em;
+  height: 10em;
+}
+.loader {
+  margin: 60px auto;
+  font-size: 10px;
+  position: relative;
+  text-indent: -9999em;
+  border: 0.75em solid var(--color-primary);
+  border-left-color: white;
+  transform: translateZ(0);
+  animation: load8 1.1s infinite linear;
+}
+
+@keyframes load8 {
+  0% {
+    transform: rotate(0deg);
   }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 
+  Utils
+ */
+
+.hidden {
+  display: none;
+}
+
+.decoration-none {
+  text-decoration: none !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+.align-middle {
+  vertical-align: middle !important;
 }
 
 .pb-xl {
@@ -143,60 +186,4 @@ h4 {
 .my-none {
   margin-top: 0px !important;
   margin-bottom: 0px !important;
-}
-
-.tooltip-danger {
-  margin-left: 8px;
-  margin-right: 8px;
-  background: red;
-  padding: 0px 4px;
-  border-radius: 100%;
-  font-size: 6px;
-  cursor: pointer;
-}
-
-.align-middle {
-  vertical-align: middle !important;
-}
-
-.loader,
-.loader:after {
-  border-radius: 50%;
-  width: 10em;
-  height: 10em;
-}
-.loader {
-  margin: 60px auto;
-  font-size: 10px;
-  position: relative;
-  text-indent: -9999em;
-  border-top: 0.75em solid #1c73bb;
-  border-right: 0.75em solid #1c73bb;
-  border-bottom: 0.75em solid #1c73bb;
-  border-left: 0.75em solid #ffffff;
-  -webkit-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-animation: load8 1.1s infinite linear;
-  animation: load8 1.1s infinite linear;
-}
-@-webkit-keyframes load8 {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-@keyframes load8 {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
 }
