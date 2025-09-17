@@ -95,7 +95,7 @@ const metricsToObject = (metrics: Metric[], level: Metric["level"]) => {
     metrics
       .filter((m) => m.level === level)
       .reduce((obj, curr) => {
-        obj[curr.label] = Math.round(curr.value * 10) / 10;
+        obj[curr.label] = Math.round(curr.value * 100_000) / 100_000;
         return obj;
       }, {} as Record<MetricTypes, number>)
   );

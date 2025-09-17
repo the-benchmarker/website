@@ -15,6 +15,7 @@ import FrameworkSelector, {
   SelectOptionFramework,
 } from "../components/FrameworkSelector";
 import { BenchmarkDataSet } from "../App";
+import type { MetricTypes } from "../api";
 import { COMPARED_METRICS, CONCURRENCIES, ComparedMetric } from "../common";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 
@@ -54,7 +55,11 @@ function CompareFramework({ benchmarks }: Props) {
 
         const datasets = benchmarks.map((b) => ({
           ...b,
-          data: CONCURRENCIES.map((c) => b[`level${c}` as const][metric.key]),
+          data: CONCURRENCIES.map((c) => {
+            let value = b[`level${c}` as const][metric.key];
+            if (isLatencyMetric(metric.key)) value *= 1000;
+            return value;
+          }),
         }));
 
         return {
@@ -175,5 +180,17 @@ function CompareFramework({ benchmarks }: Props) {
     </div>
   );
 }
+
+const LATENCY_METRICS: MetricTypes[] = [
+  "percentile50",
+  "percentile75",
+  "percentile90",
+  "percentile99",
+  "percentile99999",
+  "averageLatency",
+  "minimumLatency",
+  "maximumLatency",
+];
+const isLatencyMetric = (k: MetricTypes) => LATENCY_METRICS.includes(k);
 
 export default CompareFramework;
