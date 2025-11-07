@@ -7,8 +7,7 @@ import Home from "./views/Home";
 import AppHeader from "./components/AppHeader";
 import ScrollToTop from "./components/ScrollToTop";
 import { NuqsAdapter } from "nuqs/adapters/react-router/v7";
-
-import KeepAlive from "./components/KeepAlive";
+import KeepAliveRouteOutlet from "keepalive-for-react-router";
 
 const BenchmarkResult = lazy(() => import("./views/BenchmarkResult"));
 const CompareFrameworks = lazy(() => import("./views/CompareFramework"));
@@ -51,10 +50,10 @@ function App() {
   };
 
   useEffect(() => {
-    fetchBenchmarkData(
-      new URLSearchParams(window.location.search).get("sha") ?? "master",
-      true
-    );
+    const sha =
+      new URLSearchParams(window.location.search).get("sha") ?? "master";
+
+    Promise.resolve().then(() => fetchBenchmarkData(sha, true));
   }, []);
 
   return (
@@ -67,7 +66,7 @@ function App() {
           <div className={`container ${isLoading ? "hidden" : ""}`}>
             <Suspense fallback={<div className="loader">Loading...</div>}>
               <Routes>
-                <Route path="/" element={<KeepAlive />}>
+                <Route path="/" element={<KeepAliveRouteOutlet />}>
                   <Route
                     path=""
                     element={

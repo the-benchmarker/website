@@ -1,30 +1,23 @@
-import { globalIgnores } from "eslint/config";
+import { defineConfig, globalIgnores } from "eslint/config";
 import globals from "globals";
 import js from "@eslint/js";
-import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
+import reactPlugin from "eslint-plugin-react";
 
-export default tseslint.config([
+export default defineConfig([
   globalIgnores(["dist/"]),
   js.configs.recommended,
   tseslint.configs.recommended,
+  reactPlugin.configs.flat.recommended,
+  reactPlugin.configs.flat["jsx-runtime"],
+  reactHooks.configs.flat.recommended,
+  reactRefresh.configs.vite,
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
-    plugins: { react },
-    extends: [
-      reactHooks.configs["recommended-latest"],
-      reactRefresh.configs.vite,
-    ],
     languageOptions: {
-      parserOptions: {
-        ...react.configs.recommended.parserOptions,
-        ...react.configs["jsx-runtime"].parserOptions,
-      },
-      globals: {
-        ...globals.browser,
-      },
+      globals: globals.browser,
     },
     settings: {
       react: {
@@ -32,8 +25,6 @@ export default tseslint.config([
       },
     },
     rules: {
-      ...react.configs.recommended.rules,
-      ...react.configs["jsx-runtime"].rules,
       "@typescript-eslint/no-explicit-any": "off",
     },
   },
