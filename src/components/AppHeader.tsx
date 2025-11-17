@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import Select from "react-select";
 import { getBenchmarkHistories } from "../api";
-import { SelectOption } from "../common";
+import type { SelectOption } from "../common";
 
 interface Props {
   onHistoryChange: (sha: string) => void;

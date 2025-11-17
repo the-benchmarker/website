@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { Hardware } from "../api";
+import type { Hardware } from "../api";
 
 interface Props {
   updateDate: string;

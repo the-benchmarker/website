@@ -1,6 +1,6 @@
-import { useEffect, useState, lazy, Suspense } from "react";
+import { useEffect, useState, lazy } from "react";
 import { random as randomColor } from "colord";
-import { Benchmark, getBenchmarkData, Hardware } from "./api";
+import { type Benchmark, getBenchmarkData, type Hardware } from "./api";
 import { BrowserRouter, Route, Routes } from "react-router";
 
 import Home from "./views/Home";

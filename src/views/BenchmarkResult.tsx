@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import Select from "react-select";
-import DataTable, { TableColumn } from "react-data-table-component";
+import DataTable, { type TableColumn } from "react-data-table-component";
 import { isMobile } from "react-device-detect";
 import { Tooltip } from "react-tooltip";
 import FrameworkSelector, {
-  SelectOptionFramework,
+  type SelectOptionFramework,
 } from "../components/FrameworkSelector";
 import HttpErrorsTooltip from "../components/HttpErrorsTooltip";
-import { Benchmark, MetricTypes } from "../api";
-import { COMPARED_METRICS, CONCURRENCIES, SelectOption } from "../common";
+import type { Benchmark, MetricTypes } from "../api";
+import { COMPARED_METRICS, CONCURRENCIES, type SelectOption } from "../common";
 import {
   parseAsArrayOf,
   parseAsBoolean,
