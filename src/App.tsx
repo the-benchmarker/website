@@ -25,71 +25,70 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchBenchmarkData = async (sha = "master", updateDate = false) => {
-    setIsLoading(true);
-    const {
-      data: benchmarks,
-      updatedAt,
-      hardware,
-    } = await getBenchmarkData(sha);
+    try {
+      setIsLoading(true);
 
-    // Map data, add additional property for chart datasets
-    const data: BenchmarkDataSet[] = benchmarks.map((b) => {
-      const color = randomColor();
-      return {
-        ...b,
-        color: color.darken(0.2).toHex(),
-        label: `${b.framework.label} (${b.framework.version})`,
-        backgroundColor: color.lighten().toHex(),
-      };
-    });
+      const {
+        data: benchmarks,
+        updatedAt,
+        hardware,
+      } = await getBenchmarkData(sha);
 
-    setBenchmarks(data);
-    if (updateDate) setUpdatedAt(updatedAt.split(" ")[0]);
-    setHardware(hardware);
-    setIsLoading(false);
+      // Map data, add additional property for chart datasets
+      const data: BenchmarkDataSet[] = benchmarks.map((b) => {
+        const color = randomColor();
+        return {
+          ...b,
+          color: color.darken(0.2).toHex(),
+          label: `${b.framework.label} (${b.framework.version})`,
+          backgroundColor: color.lighten().toHex(),
+        };
+      });
+
+      setBenchmarks(data);
+      if (updateDate) setUpdatedAt(updatedAt.split(" ")[0]);
+      setHardware(hardware);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
     const sha =
       new URLSearchParams(window.location.search).get("sha") ?? "master";
-
-    Promise.resolve().then(() => fetchBenchmarkData(sha, true));
+    fetchBenchmarkData(sha, true);
   }, []);
 
   return (
-    <BrowserRouter>
-      <NuqsAdapter>
-        <div>
-          <AppHeader onHistoryChange={fetchBenchmarkData} />
-          <ScrollToTop />
-          {isLoading && <div className="loader">Loading...</div>}
+    <NuqsAdapter>
+      <BrowserRouter>
+        <AppHeader onHistoryChange={fetchBenchmarkData} />
+        <ScrollToTop />
+        {isLoading && <div className="loader">Loading...</div>}
+        <main>
           <div className={`container ${isLoading ? "hidden" : ""}`}>
-            <Suspense fallback={<div className="loader">Loading...</div>}>
-              <Routes>
-                <Route path="/" element={<KeepAliveRouteOutlet />}>
-                  <Route
-                    path=""
-                    element={
-                      <Home updateDate={updatedAt} hardware={hardware} />
-                    }
-                  />
-                  <Route
-                    path="/result"
-                    element={<BenchmarkResult benchmarks={benchmarks} />}
-                  />
-                  <Route
-                    path="/compare"
-                    element={<CompareFrameworks benchmarks={benchmarks} />}
-                  />
-                </Route>
-              </Routes>
-            </Suspense>
+            <Routes>
+              <Route path="/" element={<KeepAliveRouteOutlet />}>
+                <Route
+                  index
+                  element={<Home updateDate={updatedAt} hardware={hardware} />}
+                />
+                <Route
+                  path="result"
+                  element={<BenchmarkResult benchmarks={benchmarks} />}
+                />
+                <Route
+                  path="compare"
+                  element={<CompareFrameworks benchmarks={benchmarks} />}
+                />
+              </Route>
+            </Routes>
           </div>
-          {/* Bottom Space */}
-          <div style={{ height: "25vh" }}></div>{" "}
-        </div>
-      </NuqsAdapter>
-    </BrowserRouter>
+        </main>
+        {/* Bottom Space */}
+        <div style={{ height: "25vh" }}></div>{" "}
+      </BrowserRouter>
+    </NuqsAdapter>
   );
 }
 

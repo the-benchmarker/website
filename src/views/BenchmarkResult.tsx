@@ -236,9 +236,9 @@ function BenchmarkResult({ benchmarks }: Props) {
       <Tooltip
         anchorSelect=".tooltip-trigger"
         style={{ zIndex: 9999 }}
-        render={({ content }) => (
-          <HttpErrorsTooltip errorsString={content || undefined} />
-        )}
+        render={({ content }) =>
+          content ? <HttpErrorsTooltip errorsString={content} /> : null
+        }
       />
 
       {columns.length > 0 ? (

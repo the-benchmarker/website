@@ -1,12 +1,10 @@
 type HttpErrors = [number, number, number]; // 64, 256, 512
 
 interface Props {
-  errorsString?: string;
+  errorsString: string;
 }
 
 function HttpErrorsTooltip({ errorsString }: Props) {
-  if (!errorsString) return;
-
   const [level64, level256, level512] = JSON.parse(errorsString) as HttpErrors;
 
   return (

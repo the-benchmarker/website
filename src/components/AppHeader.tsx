@@ -11,26 +11,22 @@ interface Props {
 function NavBar({ onHistoryChange }: Props) {
   const [historyOptions, setHistoryOptions] = useState<SelectOption[]>([]);
 
-  const fetchBenchmarkHistories = async () => {
-    // only fetch once
-    if (historyOptions.length > 1) return;
-
-    const benchmarkHistories = await getBenchmarkHistories();
-    setHistoryOptions(
-      benchmarkHistories.map((h, i) => ({
-        label: (i === 0 ? "Latest — " : "") + h.date,
-        value: h.sha,
-      }))
-    );
-  };
-
   useEffect(() => {
+    const fetchBenchmarkHistories = async () => {
+      const benchmarkHistories = await getBenchmarkHistories();
+      setHistoryOptions(
+        benchmarkHistories.map((h, i) => ({
+          label: (i === 0 ? "Latest — " : "") + h.date,
+          value: h.sha,
+        }))
+      );
+    };
+
     fetchBenchmarkHistories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div>
+    <header>
       <div className="text-center">
         <h1 className="my-none">Web Frameworks Benchmark</h1>
 
@@ -69,7 +65,7 @@ function NavBar({ onHistoryChange }: Props) {
         </div>
       </div>
       <hr />
-    </div>
+    </header>
   );
 }
 

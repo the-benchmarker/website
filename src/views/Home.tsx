@@ -115,7 +115,7 @@ export default function Home({ updateDate, hardware }: Props) {
           </div>
         )}
       </section>
-      <Link to="/result" className=" text-center decoration-none">
+      <Link to="/result" className="text-center decoration-none">
         <h4>Check Out the Benchmark Results!</h4>
       </Link>
     </div>
