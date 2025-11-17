@@ -29,7 +29,7 @@ interface Props {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Legend, Tooltip);
 
-type ChartsData = (ComparedMetric & { chartData: ChartData })[];
+type ChartsData = (ComparedMetric & { chartData: ChartData<"bar"> })[];
 
 function CompareFramework({ benchmarks }: Props) {
   const [charts, setCharts] = useState<ChartsData>([]);
