@@ -1,6 +1,6 @@
 import { colord, extend } from "colord";
 import Select from "react-select";
-import { SelectOption } from "../common";
+import type { SelectOption } from "../common";
 import a11yPlugin from "colord/plugins/a11y";
 
 extend([a11yPlugin]);

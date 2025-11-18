@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { Hardware } from "../api";
+import type { Hardware } from "../api";
 
 interface Props {
   updateDate: string;
@@ -115,7 +115,7 @@ export default function Home({ updateDate, hardware }: Props) {
           </div>
         )}
       </section>
-      <Link to="/result" className=" text-center decoration-none">
+      <Link to="/result" className="text-center decoration-none">
         <h4>Check Out the Benchmark Results!</h4>
       </Link>
     </div>

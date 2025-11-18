@@ -1,4 +1,4 @@
-import { MetricTypes } from "../api";
+import type { MetricTypes } from "../api";
 import { formatLatency, formatThousandSeparated } from "./formatter";
 
 export type ComparedMetric = {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   BarElement,
   CategoryScale,
-  ChartData,
+  type ChartData,
   Chart as ChartJS,
   Legend,
   LinearScale,
@@ -12,11 +12,15 @@ import { Bar } from "react-chartjs-2";
 import { isMobile } from "react-device-detect";
 
 import FrameworkSelector, {
-  SelectOptionFramework,
+  type SelectOptionFramework,
 } from "../components/FrameworkSelector";
-import { BenchmarkDataSet } from "../App";
+import type { BenchmarkDataSet } from "../App";
 import type { MetricTypes } from "../api";
-import { COMPARED_METRICS, CONCURRENCIES, ComparedMetric } from "../common";
+import {
+  COMPARED_METRICS,
+  CONCURRENCIES,
+  type ComparedMetric,
+} from "../common";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 
 interface Props {
@@ -25,7 +29,7 @@ interface Props {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Legend, Tooltip);
 
-type ChartsData = (ComparedMetric & { chartData: ChartData })[];
+type ChartsData = (ComparedMetric & { chartData: ChartData<"bar"> })[];
 
 function CompareFramework({ benchmarks }: Props) {
   const [charts, setCharts] = useState<ChartsData>([]);
