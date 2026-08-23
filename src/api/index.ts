@@ -94,18 +94,21 @@ const metricsToObject = (metrics: Metric[], level: Metric["level"]) => {
   return camelcaseKeys(
     metrics
       .filter((m) => m.level === level)
-      .reduce((obj, curr) => {
-        obj[curr.label] = Math.round(curr.value * 100_000) / 100_000;
-        return obj;
-      }, {} as Record<MetricTypes, number>)
+      .reduce(
+        (obj, curr) => {
+          obj[curr.label] = Math.round(curr.value * 100_000) / 100_000;
+          return obj;
+        },
+        {} as Record<MetricTypes, number>,
+      ),
   );
 };
 
 export const getBenchmarkData = async (
-  sha = "master"
+  sha = "master",
 ): Promise<BenchmarkData> => {
   const response = await fetch(
-    `https://raw.githubusercontent.com/the-benchmarker/web-frameworks/${sha}/data.min.json`
+    `https://raw.githubusercontent.com/the-benchmarker/web-frameworks/${sha}/data.min.json`,
   );
 
   const data: BenchmarkRawData = camelcaseKeys(await response.json(), {
@@ -152,7 +155,7 @@ export const getBenchmarkData = async (
 
 export const getBenchmarkHistories = async (): Promise<BenchmarkHistory[]> => {
   const response = await fetch(
-    "https://api.github.com/repos/the-benchmarker/web-frameworks/commits?path=data.min.json"
+    "https://api.github.com/repos/the-benchmarker/web-frameworks/commits?path=data.min.json",
   );
 
   const data: BenchmarkHistoryRawDataMin[] = await response.json();

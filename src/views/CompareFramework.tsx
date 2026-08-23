@@ -37,7 +37,7 @@ function CompareFramework({ benchmarks }: Props) {
 
   const [frameworkParams, setFrameworkParams] = useQueryState(
     "f",
-    parseAsArrayOf(parseAsString).withDefault([])
+    parseAsArrayOf(parseAsString).withDefault([]),
   );
 
   const getFrameworkOptions = (): SelectOptionFramework[] => {
@@ -54,7 +54,7 @@ function CompareFramework({ benchmarks }: Props) {
     setCharts(
       COMPARED_METRICS.map((metric) => {
         const labels = CONCURRENCIES.map(
-          (c) => `${!isMobile ? "Concurrency " : ""}${c}`
+          (c) => `${!isMobile ? "Concurrency " : ""}${c}`,
         );
 
         const datasets = benchmarks.map((b) => ({
@@ -70,7 +70,7 @@ function CompareFramework({ benchmarks }: Props) {
           ...metric,
           chartData: { labels, datasets },
         };
-      })
+      }),
     );
   };
 
@@ -91,7 +91,7 @@ function CompareFramework({ benchmarks }: Props) {
     setFrameworks(
       frameworks
         .map((f) => frameworkOptions.find(({ value }) => f === value))
-        .filter((b): b is SelectOptionFramework => !!b)
+        .filter((b): b is SelectOptionFramework => !!b),
     );
 
     // Find benchmark by framework name
@@ -107,12 +107,12 @@ function CompareFramework({ benchmarks }: Props) {
   useEffect(() => {
     if (benchmarks.length)
       setFrameworkParams(
-        frameworks.length ? frameworks.map((f) => `${f.value}`) : []
+        frameworks.length ? frameworks.map((f) => `${f.value}`) : [],
       );
 
     // Get benchmark data from selected frameworks id
-    const filteredBenchmark = frameworks.map(
-      (f) => benchmarks.find((b) => b.framework.label === f.value)!
+    const filteredBenchmark = frameworks.map((f) =>
+      benchmarks.find((b) => b.framework.label === f.value)!,
     );
 
     updateCharts(filteredBenchmark);

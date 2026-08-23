@@ -13,14 +13,18 @@ Found a bug or have a suggestion/ feedback? Feel free to [create a new issue](ht
 1. Fork this repository
 2. Clone the forked repository
 3. Install required dependencies
-```
-cd website
-npm i
-```
+
+    ```
+    cd website
+    npm i
+    ```
+
 4. Run dev server with hot reloading feature
-```
-npm run dev
-```
+
+    ```
+    npm run dev
+    ```
+
 5. Make awesome changes and commit it
 6. Create a [Pull Request](https://github.com/the-benchmarker/website/pulls)
 

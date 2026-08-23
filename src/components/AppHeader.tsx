@@ -18,7 +18,7 @@ function NavBar({ onHistoryChange }: Props) {
         benchmarkHistories.map((h, i) => ({
           label: (i === 0 ? "Latest — " : "") + h.date,
           value: h.sha,
-        }))
+        })),
       );
     };
 
