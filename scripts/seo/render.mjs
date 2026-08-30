@@ -5,7 +5,7 @@ import { CONCURRENCIES, METRICS } from "./data.mjs";
 // Same default as src/common/site.ts. Both hosts serve the same build, so the
 // canonical host has to be pinned rather than read off window.location.
 export const SITE_URL = (
-  process.env.VITE_SITE_URL || "https://web-frameworks-benchmark.netlify.app"
+  process.env.VITE_SITE_URL || "https://web-frameworks-benchmark.vercel.app"
 ).replace(/\/$/, "");
 
 export const absolute = (path) => `${SITE_URL}${path}`;
