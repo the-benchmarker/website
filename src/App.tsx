@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 
 import Home from "./views/Home";
 import AppHeader from "./components/AppHeader";
+import Seo from "./components/Seo";
 import ScrollToTop from "./components/ScrollToTop";
 import { NuqsAdapter } from "nuqs/adapters/react-router/v7";
 import KeepAliveRouteOutlet from "keepalive-for-react-router";
@@ -62,6 +63,7 @@ function App() {
   return (
     <NuqsAdapter>
       <BrowserRouter>
+        <Seo />
         <AppHeader onHistoryChange={fetchBenchmarkData} />
         <ScrollToTop />
         {isLoading && <div className="loader">Loading...</div>}
