@@ -28,4 +28,15 @@ export default defineConfig([
       "@typescript-eslint/no-explicit-any": "off",
     },
   },
+  {
+    files: ["scripts/**/*.mjs"],
+    languageOptions: {
+      globals: globals.node,
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+  },
 ]);
