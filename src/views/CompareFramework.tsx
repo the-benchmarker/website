@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import {
   BarElement,
   CategoryScale,
@@ -32,92 +32,83 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Legend, Tooltip);
 type ChartsData = (ComparedMetric & { chartData: ChartData<"bar"> })[];
 
 function CompareFramework({ benchmarks }: Props) {
-  const [charts, setCharts] = useState<ChartsData>([]);
-  const [frameworks, setFrameworks] = useState<SelectOptionFramework[]>([]);
-
   const [frameworkParams, setFrameworkParams] = useQueryState(
     "f",
     parseAsArrayOf(parseAsString).withDefault([]),
   );
 
-  const getFrameworkOptions = (): SelectOptionFramework[] => {
-    return benchmarks.map((b) => ({
-      value: b.framework.label,
-      label: `${b.language.label} - ${b.framework.label} (${b.framework.version})`,
-      color: b.color,
-    }));
-  };
+  const frameworkOptions = useMemo<SelectOptionFramework[]>(
+    () =>
+      benchmarks.map((b) => ({
+        value: b.framework.label,
+        label: `${b.language.label} - ${b.framework.label} (${b.framework.version})`,
+        color: b.color,
+      })),
+    [benchmarks],
+  );
 
-  const updateCharts = (benchmarks: BenchmarkDataSet[]) => {
-    if (!benchmarks.length) return setCharts([]);
+  const frameworks = useMemo(
+    () =>
+      frameworkParams
+        .map((value) =>
+          frameworkOptions.find((option) => option.value === value),
+        )
+        .filter((option): option is SelectOptionFramework => !!option),
+    [frameworkParams, frameworkOptions],
+  );
 
-    setCharts(
-      COMPARED_METRICS.map((metric) => {
-        const labels = CONCURRENCIES.map(
-          (c) => `${!isMobile ? "Concurrency " : ""}${c}`,
-        );
+  const selectedBenchmarks = useMemo(
+    () =>
+      frameworkParams
+        .map((framework) =>
+          benchmarks.find((b) => b.framework.label === framework),
+        )
+        .filter((b): b is BenchmarkDataSet => !!b),
+    [benchmarks, frameworkParams],
+  );
 
-        const datasets = benchmarks.map((b) => ({
-          ...b,
-          data: CONCURRENCIES.map((c) => {
-            let value = b[`level${c}` as const][metric.key];
-            if (isLatencyMetric(metric.key)) value *= 1000;
-            return value;
-          }),
-        }));
+  const charts = useMemo<ChartsData>(() => {
+    if (!selectedBenchmarks.length) return [];
 
-        return {
-          ...metric,
-          chartData: { labels, datasets },
-        };
-      }),
+    const labels = CONCURRENCIES.map(
+      (c) => `${!isMobile ? "Concurrency " : ""}${c}`,
     );
-  };
 
-  // On charts load, scroll to hash bang
+    return COMPARED_METRICS.map((metric) => {
+      const datasets = selectedBenchmarks.map((b) => ({
+        ...b,
+        data: CONCURRENCIES.map((c) => {
+          let value = b[`level${c}` as const][metric.key];
+
+          if (isLatencyMetric(metric.key)) {
+            value *= 1000;
+          }
+
+          return value;
+        }),
+      }));
+
+      return {
+        ...metric,
+        chartData: {
+          labels,
+          datasets,
+        },
+      };
+    });
+  }, [selectedBenchmarks]);
+
   useEffect(() => {
-    const header = document.getElementById(window.location.hash.substring(1));
-    if (!header) return;
-    header.scrollIntoView();
+    const hash = window.location.hash.substring(1);
+    if (!hash) return;
+
+    const header = document.getElementById(hash);
+    header?.scrollIntoView();
   }, [charts]);
 
-  // On Benchmark data change
-  useEffect(() => {
-    if (!benchmarks.length) return;
-
-    const frameworks = frameworkParams || [];
-    const frameworkOptions = getFrameworkOptions();
-
-    setFrameworks(
-      frameworks
-        .map((f) => frameworkOptions.find(({ value }) => f === value))
-        .filter((b): b is SelectOptionFramework => !!b),
-    );
-
-    // Find benchmark by framework name
-    const filteredBenchmark = frameworks
-      .map((f) => benchmarks.find((b) => b.framework.label === f))
-      .filter((b): b is BenchmarkDataSet => !!b);
-
-    updateCharts(filteredBenchmark);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [benchmarks]);
-
-  // FrameworkSelector onChange handler
-  useEffect(() => {
-    if (benchmarks.length)
-      setFrameworkParams(
-        frameworks.length ? frameworks.map((f) => `${f.value}`) : [],
-      );
-
-    // Get benchmark data from selected frameworks id
-    const filteredBenchmark = frameworks.map((f) =>
-      benchmarks.find((b) => b.framework.label === f.value)!,
-    );
-
-    updateCharts(filteredBenchmark);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frameworks, benchmarks]);
+  const onFrameworksChange = (value: SelectOptionFramework[]) => {
+    setFrameworkParams(value.map((framework) => String(framework.value)));
+  };
 
   return (
     <div>
@@ -125,24 +116,21 @@ function CompareFramework({ benchmarks }: Props) {
 
       <FrameworkSelector
         value={frameworks}
-        options={benchmarks.map((b) => ({
-          value: b.framework.label,
-          label: `${b.language.label} - ${b.framework.label} (${b.framework.version})`,
-          color: b.color,
-        }))}
-        onChange={setFrameworks}
+        options={frameworkOptions}
+        onChange={onFrameworksChange}
       />
 
       <div className="pt-md">
-        {charts.map((c, i) => (
-          <div className="pb-xl" key={i}>
-            <h4 id={c.key} className="text-center">
-              <a className="decoration-none" href={`#${c.key}`}>
-                {c.longTitle || c.title}
+        {charts.map((chart) => (
+          <div className="pb-xl" key={chart.key}>
+            <h4 id={chart.key} className="text-center">
+              <a className="decoration-none" href={`#${chart.key}`}>
+                {chart.longTitle || chart.title}
               </a>
             </h4>
+
             <Bar
-              data={c.chartData}
+              data={chart.chartData}
               height={isMobile ? 250 : 100}
               options={{
                 scales: {
@@ -195,6 +183,7 @@ const LATENCY_METRICS: MetricTypes[] = [
   "minimumLatency",
   "maximumLatency",
 ];
-const isLatencyMetric = (k: MetricTypes) => LATENCY_METRICS.includes(k);
+
+const isLatencyMetric = (key: MetricTypes) => LATENCY_METRICS.includes(key);
 
 export default CompareFramework;
