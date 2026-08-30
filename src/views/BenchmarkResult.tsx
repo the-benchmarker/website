@@ -76,11 +76,11 @@ interface Props {
 function BenchmarkResult({ benchmarks }: Props) {
   const [frameworkParams, setFrameworkParams] = useQueryState(
     "f",
-    parseAsArrayOf(parseAsString)
+    parseAsArrayOf(parseAsString),
   );
   const [languageParams, setLanguageParams] = useQueryState(
     "l",
-    parseAsArrayOf(parseAsString)
+    parseAsArrayOf(parseAsString),
   );
   const [metricParam, setMetricParam] = useQueryState("metric");
   const [sortParams, setSortParams] = useQueryStates({
@@ -103,7 +103,7 @@ function BenchmarkResult({ benchmarks }: Props) {
       ({ label, version }) => ({
         value: label,
         label: `${label} (${version})`,
-      })
+      }),
     );
   };
 
@@ -127,7 +127,7 @@ function BenchmarkResult({ benchmarks }: Props) {
   // Handler for table sort
   const onTableSort = (
     column: TableColumn<Benchmark>,
-    direction: "asc" | "desc"
+    direction: "asc" | "desc",
   ) => {
     setSortParams({ orderBy: column.id?.toString(), asc: direction === "asc" });
   };
@@ -138,10 +138,10 @@ function BenchmarkResult({ benchmarks }: Props) {
     const frameworks = frameworkParams || [];
     const metric = metricParam || defaultMetric.value;
     setLanguages(
-      getLanguagesOptions().filter((l) => languages.includes(`${l.value}`))
+      getLanguagesOptions().filter((l) => languages.includes(`${l.value}`)),
     );
     setFrameworks(
-      getFrameworkOptions().filter((f) => frameworks.includes(`${f.value}`))
+      getFrameworkOptions().filter((f) => frameworks.includes(`${f.value}`)),
     );
     setMetric(metricOptions.find((m) => m.value === metric) || null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -151,7 +151,7 @@ function BenchmarkResult({ benchmarks }: Props) {
   useEffect(() => {
     // Get metric data by metric key
     const { key, title, format, round } = COMPARED_METRICS.find(
-      ({ key }) => key === ((metric?.value || defaultMetric) as MetricTypes)
+      ({ key }) => key === ((metric?.value || defaultMetric) as MetricTypes),
     )!;
 
     // create columns based on selected metric
@@ -183,10 +183,10 @@ function BenchmarkResult({ benchmarks }: Props) {
       //   f: frameworks.length ? frameworks.map((f) => `${f.value}`) : undefined,
       // });
       setLanguageParams(
-        languages.length ? languages.map((l) => `${l.value}`) : []
+        languages.length ? languages.map((l) => `${l.value}`) : [],
       );
       setFrameworkParams(
-        frameworks.length ? frameworks.map((f) => `${f.value}`) : []
+        frameworks.length ? frameworks.map((f) => `${f.value}`) : [],
       );
     }
 
@@ -196,7 +196,7 @@ function BenchmarkResult({ benchmarks }: Props) {
     const filteredBenchmark = benchmarks.filter(
       (b) =>
         languages.map((l) => l.value).includes(b.language.label) ||
-        frameworks.map((f) => f.value).includes(b.framework.label)
+        frameworks.map((f) => f.value).includes(b.framework.label),
     );
 
     setTableData(filteredBenchmark);

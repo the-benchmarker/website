@@ -15,7 +15,7 @@ interface Styles<T = any> {
       isDisabled: boolean;
       isFocused: boolean;
       isSelected: boolean;
-    }
+    },
   ) => void;
   multiValue: (style: any, prop: { data: T }) => void;
   multiValueLabel: (style: any, prop: { data: T }) => void;
@@ -43,17 +43,17 @@ const styles: Styles<SelectOptionFramework> = {
       backgroundColor: isDisabled
         ? null
         : isSelected
-        ? data.color
-        : isFocused
-        ? color.alpha(0.1).toHex()
-        : null,
+          ? data.color
+          : isFocused
+            ? color.alpha(0.1).toHex()
+            : null,
       color: isDisabled
         ? "#ccc"
         : isSelected
-        ? colord(color).contrast("#ffffff") > 2
-          ? "white"
-          : "black"
-        : data.color,
+          ? colord(color).contrast("#ffffff") > 2
+            ? "white"
+            : "black"
+          : data.color,
       cursor: isDisabled ? "not-allowed" : "default",
 
       ":active": {
