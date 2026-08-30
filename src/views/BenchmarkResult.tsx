@@ -172,7 +172,7 @@ function BenchmarkResult({ benchmarks }: Props) {
 
   const onTableSort = (
     column: TableColumn<Benchmark>,
-    direction: "asc" | "desc"
+    direction: "asc" | "desc",
   ) => {
     setSortParams({
       orderBy: column.id?.toString(),

@@ -34,7 +34,7 @@ type ChartsData = (ComparedMetric & { chartData: ChartData<"bar"> })[];
 function CompareFramework({ benchmarks }: Props) {
   const [frameworkParams, setFrameworkParams] = useQueryState(
     "f",
-    parseAsArrayOf(parseAsString).withDefault([])
+    parseAsArrayOf(parseAsString).withDefault([]),
   );
 
   const frameworkOptions = useMemo<SelectOptionFramework[]>(

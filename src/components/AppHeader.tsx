@@ -18,7 +18,7 @@ function NavBar({ onHistoryChange }: Props) {
         benchmarkHistories.map((h, i) => ({
           label: (i === 0 ? "Latest — " : "") + h.date,
           value: h.sha,
-        }))
+        })),
       );
     };
 
@@ -39,6 +39,10 @@ function NavBar({ onHistoryChange }: Props) {
           </li>
           <li>
             <Link to="/compare">Compare Frameworks</Link>
+          </li>
+          <li>
+            {/* Static, pre-rendered pages: a full page load, not a <Link>. */}
+            <a href="/frameworks/">Frameworks</a>
           </li>
           <li>
             <a
