@@ -41,6 +41,10 @@ function NavBar({ onHistoryChange }: Props) {
             <Link to="/compare">Compare Frameworks</Link>
           </li>
           <li>
+            {/* Static, pre-rendered pages: a full page load, not a <Link>. */}
+            <a href="/frameworks/">Frameworks</a>
+          </li>
+          <li>
             <a
               href="https://github.com/the-benchmarker/website"
               target="_blank"
