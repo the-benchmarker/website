@@ -143,7 +143,7 @@ ${body}
 </main>
 <footer class="container">
 <hr>
-<p>Measured with <a href="https://github.com/wg/wrk">wrk</a> (8 threads, 8s timeout, 15s per run)
+<p>Measured with <a href="https://zoxy.io/zrk/">zrk</a> (8 threads, 8s timeout, 15s per run)
 at concurrency ${CONCURRENCIES.join(", ")}, on ${escapeHtml(
   benchmark.hardware?.cpus ?? "?"
 )} cores (${escapeHtml(
