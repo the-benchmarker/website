@@ -76,7 +76,7 @@ export default function Home({ updateDate, hardware }: Props) {
             <code>ruby</code>, all tools are made in <code>ruby</code>
           </li>
           <li>
-            <code>wrk</code>, results are collected using <code>wrk</code>
+            <code>zrk</code>, results are collected using <code>zrk</code>
           </li>
           <li>
             <code>postgresql</code>, results are stored in{" "}
@@ -96,8 +96,8 @@ export default function Home({ updateDate, hardware }: Props) {
         <h3>Technical Details</h3>
         <p>
           All frameworks are benchmarked using{" "}
-          <a href="https://github.com/wg/wrk" target="_blank" rel="noreferrer">
-            wrk
+          <a href="https://zoxy.io/zrk/" target="_blank" rel="noreferrer">
+            zrk
           </a>{" "}
           (threads: 8, timeout: 8, duration: 15 seconds) with <b>64</b>,{" "}
           <b>256</b>, and <b>512</b> concurrency.

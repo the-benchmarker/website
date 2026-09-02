@@ -7,7 +7,7 @@ const DATA_URL =
   "https://raw.githubusercontent.com/the-benchmarker/web-frameworks/master/data.min.json";
 const CACHE_FILE = new URL("../../node_modules/.cache/seo/data.min.json", import.meta.url);
 
-// The three concurrency levels wrk is run with, see the "Technical Details"
+// The three concurrency levels zrk is run with, see the "Technical Details"
 // section of the home page.
 export const CONCURRENCIES = [64, 256, 512];
 

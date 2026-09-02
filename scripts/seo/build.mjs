@@ -152,7 +152,7 @@ const languagePage = (language, benchmark) => {
   const fastest = language.frameworks[0];
   const description =
     `Benchmark results for ${language.frameworks.length} ${language.label} web frameworks, ` +
-    `measured with wrk at concurrency ${CONCURRENCIES.join(", ")}. Fastest at concurrency ` +
+    `measured with zrk at concurrency ${CONCURRENCIES.join(", ")}. Fastest at concurrency ` +
     `${CONCURRENCIES[0]}: ${fastest.label} with ${formatMetric(
       "rps",
       fastest.levels[CONCURRENCIES[0]].total_requests_per_s
@@ -220,7 +220,7 @@ const hubPage = (benchmark) => {
   const top = [...benchmark.frameworks].sort((a, b) => a.rank[level] - b.rank[level]).slice(0, 50);
   const description =
     `Benchmark results for ${benchmark.frameworks.length} web frameworks in ` +
-    `${benchmark.languages.length} languages, measured with wrk at concurrency ` +
+    `${benchmark.languages.length} languages, measured with zrk at concurrency ` +
     `${CONCURRENCIES.join(", ")}. Data of ${benchmark.updatedAtDate}.`;
 
   const body = `
@@ -292,7 +292,7 @@ const patchIndex = async (benchmark) => {
   const top = [...benchmark.frameworks].sort((a, b) => a.rank[level] - b.rank[level]).slice(0, 25);
   const description =
     `Performance comparison of ${benchmark.frameworks.length} web frameworks in ` +
-    `${benchmark.languages.length} languages, measured with wrk at concurrency ` +
+    `${benchmark.languages.length} languages, measured with zrk at concurrency ` +
     `${CONCURRENCIES.join(", ")}. Data of ${benchmark.updatedAtDate}.`;
 
   const head = `
@@ -410,7 +410,7 @@ const llms = (benchmark) => {
 
 > Throughput and latency of ${benchmark.frameworks.length} web frameworks in ${
     benchmark.languages.length
-  } languages, all serving the same two routes from a Docker container, measured with wrk (8 threads, 15 seconds) at concurrency ${CONCURRENCIES.join(
+  } languages, all serving the same two routes from a Docker container, measured with zrk (8 threads, 15 seconds) at concurrency ${CONCURRENCIES.join(
     ", "
   )}. Run by The Benchmarker. Data of ${benchmark.updatedAtDate}.
 
@@ -459,7 +459,7 @@ const llmsFull = (benchmark) => {
     `# Web Frameworks Benchmark, full results`,
     ``,
     `Data of ${benchmark.updatedAtDate}. ${benchmark.frameworks.length} frameworks, ${benchmark.languages.length} languages.`,
-    `Measured with wrk, 8 threads, 8s timeout, 15s per run, at concurrency ${CONCURRENCIES.join(", ")}.`,
+    `Measured with zrk, 8 threads, 8s timeout, 15s per run, at concurrency ${CONCURRENCIES.join(", ")}.`,
     `Hardware: ${benchmark.hardware?.cpus ?? "?"} cores (${
       benchmark.hardware?.cpu_name ?? "unknown CPU"
     }), ${benchmark.hardware?.os?.sysname ?? "Linux"}.`,
