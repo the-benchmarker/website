@@ -39,11 +39,15 @@ which reads the benchmark dataset and writes into `dist/`:
 - a static, no-JavaScript page per framework (`/frameworks/<language>/<framework>/`) and
   per language (`/frameworks/<language>/`), with the numbers in a real table
 - `sitemap.xml`, `robots.txt`, `llms.txt`, `llms-full.txt` and `data.json`
-- canonical, Open Graph and JSON-LD tags on `dist/index.html`
+- initial titles, descriptions, canonical, social and JSON-LD tags for `/`,
+  `/result` and `/compare`, with a readable fallback when JavaScript is disabled
 
 Run it alone with `npm run seo` after a build. `VITE_SITE_URL` sets the canonical host,
 `SEO_DATA_FILE` reads the dataset from a local file instead of GitHub. The pages hold the
 data of the build, so the site needs a rebuild when the benchmark is re-run.
+
+Run `node scripts/seo/verify.mjs` after building to check every generated page's
+metadata, canonical URL, primary heading, structured data and benchmark content.
 
 ---
 

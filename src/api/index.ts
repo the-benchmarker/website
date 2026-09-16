@@ -110,6 +110,8 @@ export const getBenchmarkData = async (
   const response = await fetch(
     `https://raw.githubusercontent.com/the-benchmarker/web-frameworks/${sha}/data.min.json`,
   );
+  if (!response.ok)
+    throw new Error(`Benchmark data unavailable (${response.status})`);
 
   const data: BenchmarkRawData = camelcaseKeys(await response.json(), {
     deep: true,
@@ -157,6 +159,8 @@ export const getBenchmarkHistories = async (): Promise<BenchmarkHistory[]> => {
   const response = await fetch(
     "https://api.github.com/repos/the-benchmarker/web-frameworks/commits?path=data.min.json",
   );
+  if (!response.ok)
+    throw new Error(`Benchmark history unavailable (${response.status})`);
 
   const data: BenchmarkHistoryRawDataMin[] = await response.json();
 
