@@ -5,15 +5,19 @@ interface Props {
 }
 
 function HttpErrorsTooltip({ errorsString }: Props) {
-  const [level64, level256, level512] = JSON.parse(errorsString) as HttpErrors;
+  const errors = JSON.parse(errorsString) as HttpErrors;
 
   return (
     <div>
-      HTTP Errors:
-      <ul className="pl-lg">
-        {!!level64 && <li>64: {level64}</li>}
-        {!!level256 && <li>256: {level256}</li>}
-        {!!level512 && <li>512: {level512}</li>}
+      <strong>HTTP errors recorded</strong>
+      <ul className="http-error-list">
+        {errors.map((count, index) =>
+          count > 0 ? (
+            <li key={index}>
+              {[64, 256, 512][index]} concurrent connections: {count}
+            </li>
+          ) : null,
+        )}
       </ul>
     </div>
   );
