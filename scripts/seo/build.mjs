@@ -5,6 +5,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { makeBadge } from "badge-maker";
 
 import { CONCURRENCIES, METRICS, loadBenchmark } from "./data.mjs";
 import {
@@ -59,6 +60,37 @@ const summary = (framework) => {
   );
 };
 
+const BADGE_LABEL = "web frameworks benchmark";
+
+// README badges with the same ranks as the summary, overall and in the language.
+const badges = (framework) => {
+  const level = CONCURRENCIES[0];
+  return [
+    {
+      file: "badge.svg",
+      message: `#${framework.rank[level]} of ${framework.totalCount}`,
+    },
+    {
+      file: "badge-language.svg",
+      message: `#${framework.languageRank[level]} of ${framework.language.frameworks.length} in ${framework.language.label}`,
+    },
+  ];
+};
+
+const badgeSection = (framework) => `
+<h2>Badge for your README</h2>
+<p>Show the rank of ${escapeHtml(framework.label)} in your README. The image is updated together with the results.</p>
+${badges(framework)
+  .map(
+    (badge) => `<p><img src="${framework.path}${badge.file}" alt="${escapeHtml(
+      `${BADGE_LABEL}: ${badge.message}`,
+    )}" height="20"></p>
+<pre><code>${escapeHtml(
+      `[![Web Frameworks Benchmark](${absolute(framework.path + badge.file)})](${absolute(framework.path)})`,
+    )}</code></pre>`,
+  )
+  .join("\n")}`;
+
 const frameworkPage = (framework, benchmark) => {
   const trail = [
     home,
@@ -102,6 +134,7 @@ ${CONCURRENCIES.map(
 </tbody>
 </table>
 </div>
+${badgeSection(framework)}
 ${
   peers.length
     ? `<h2>Explore ${escapeHtml(framework.language.label)} frameworks</h2>
@@ -590,6 +623,16 @@ const main = async () => {
       `${framework.path.slice(1)}index.html`,
       frameworkPage(framework, benchmark),
     );
+    for (const badge of badges(framework)) {
+      await write(
+        `${framework.path.slice(1)}${badge.file}`,
+        makeBadge({
+          label: BADGE_LABEL,
+          message: badge.message,
+          color: "#087f72",
+        }),
+      );
+    }
   }
 
   await write("sitemap.xml", sitemap(benchmark));

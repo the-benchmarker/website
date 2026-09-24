@@ -89,6 +89,7 @@ ul.grid a:hover{border-color:var(--color-primary);background:#f2faf7}
 ul.grid .muted{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.75rem;font-weight:400}
 .button-link{display:inline-flex;align-items:center;gap:12px;background:var(--color-primary);padding:11px 17px;border-radius:6px;color:#fff;font-size:.8rem;font-weight:600;text-decoration:none}.button-link:hover{background:#065f56;color:#fff}
 .method-note{padding:20px 24px;background:#edf4f2;border-left:3px solid var(--color-primary);border-radius:0 6px 6px 0;font-size:.85rem;color:#465960;margin:32px 0}
+pre{margin:0 0 32px;padding:14px 18px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:8px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.78rem;white-space:pre-wrap;overflow-wrap:anywhere}
 footer{border-top:1px solid var(--color-border);padding:28px 0 40px;font-size:.78rem;color:var(--color-muted)}
 footer p{max-width:1000px;margin:0}
 @media(max-width:800px){.container{width:calc(100% - 40px)}.header-inner{min-height:unset;flex-wrap:wrap;padding:20px 0;gap:16px}.header-inner nav{order:3;width:100%}.nav-links{gap:2px;margin-left:-10px}.nav-links a{padding:7px 10px;font-size:.8rem}main{padding-top:24px}.facts{display:block}.facts li+li{margin-top:7px}th,td{padding:12px}.table-wrap{margin:20px 0}h1{overflow-wrap:anywhere}}
