@@ -38,6 +38,9 @@ which reads the benchmark dataset and writes into `dist/`:
 
 - a static, no-JavaScript page per framework (`/frameworks/<language>/<framework>/`) and
   per language (`/frameworks/<language>/`), with the numbers in a real table
+- two README badges per framework with its rank at concurrency 64: `badge.svg` for the
+  overall rank and `badge-language.svg` for the rank in its language. The framework page
+  shows the Markdown to copy.
 - `sitemap.xml`, `robots.txt`, `llms.txt`, `llms-full.txt` and `data.json`
 - initial titles, descriptions, canonical, social and JSON-LD tags for `/`,
   `/result` and `/compare`, with a readable fallback when JavaScript is disabled

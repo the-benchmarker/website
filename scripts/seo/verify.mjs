@@ -125,6 +125,32 @@ assert.ok(
 );
 assert.match(await read("robots.txt"), /Sitemap: https?:\/\//);
 assert.ok((await read("llms-full.txt")).includes(data.frameworks[0].label));
+
+// Each framework page offers README badges with the same ranks as data.json.
+const level = data.concurrencies[0];
+for (const framework of data.frameworks) {
+  const dir = new URL(framework.url).pathname.slice(1);
+  const peers = data.frameworks.filter(
+    (f) => f.language === framework.language,
+  );
+  const badges = {
+    "badge.svg": `#${framework.rank[level]} of ${data.frameworks.length}`,
+    "badge-language.svg": `#${framework.languageRank[level]} of ${peers.length} in ${framework.language}`,
+  };
+  const html = await read(`${dir}index.html`);
+  for (const [file, message] of Object.entries(badges)) {
+    const svg = await read(`${dir}${file}`);
+    assert.ok(
+      svg.startsWith("<svg") && svg.includes(`: ${message}</title>`),
+      `/${dir}${file}: expected a badge with "${message}".`,
+    );
+    assert.ok(
+      html.includes(`${framework.url}${file}`),
+      `/${dir}: missing the ${file} snippet.`,
+    );
+  }
+}
+
 console.log(
-  `[seo:verify] ${urls.length} pages checked: unique metadata, canonical URLs, headings, structured data and benchmark content.`,
+  `[seo:verify] ${urls.length} pages checked: unique metadata, canonical URLs, headings, structured data and benchmark content. README badges checked for ${data.frameworks.length} frameworks.`,
 );
