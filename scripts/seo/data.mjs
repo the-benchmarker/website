@@ -5,7 +5,10 @@ import { dirname } from "node:path";
 
 const DATA_URL =
   "https://raw.githubusercontent.com/the-benchmarker/web-frameworks/master/data.min.json";
-const CACHE_FILE = new URL("../../node_modules/.cache/seo/data.min.json", import.meta.url);
+const CACHE_FILE = new URL(
+  "../../node_modules/.cache/seo/data.min.json",
+  import.meta.url,
+);
 
 // The three concurrency levels zrk is run with, see the "Technical Details"
 // section of the home page.
@@ -27,7 +30,11 @@ export const METRICS = [
   { key: "total_bytes_received", title: "Bytes received", kind: "bytes" },
   { key: "http_errors", title: "HTTP errors", kind: "count" },
   { key: "request_timeouts", title: "Request timeouts", kind: "count" },
-  { key: "socket_connection_errors", title: "Socket connection errors", kind: "count" },
+  {
+    key: "socket_connection_errors",
+    title: "Socket connection errors",
+    kind: "count",
+  },
   { key: "socket_read_errors", title: "Socket read errors", kind: "count" },
   { key: "socket_write_errors", title: "Socket write errors", kind: "count" },
 ];
@@ -48,12 +55,16 @@ const fetchDataset = async () => {
       const response = await fetch(DATA_URL);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const body = await response.text();
-      await mkdir(dirname(CACHE_FILE.pathname.slice(1)), { recursive: true }).catch(() => {});
+      await mkdir(dirname(CACHE_FILE.pathname.slice(1)), {
+        recursive: true,
+      }).catch(() => {});
       await writeFile(CACHE_FILE, body).catch(() => {});
       return JSON.parse(body);
     } catch (error) {
       lastError = error;
-      console.warn(`[seo] fetch of data.min.json failed (${attempt}/3): ${error.message}`);
+      console.warn(
+        `[seo] fetch of data.min.json failed (${attempt}/3): ${error.message}`,
+      );
     }
   }
 
@@ -65,8 +76,8 @@ const fetchDataset = async () => {
   }
 };
 
-// Same rule the app applies: a framework is shown only when it has every
-// metric at every concurrency level, so a partial run cannot fake a ranking.
+// A framework is shown only when every displayed metric is present at every
+// concurrency level, so a partial run cannot fake a ranking.
 const isComplete = (metricsById, frameworkId, labels) => {
   const byLabel = metricsById.get(frameworkId);
   if (!byLabel) return false;
@@ -78,7 +89,9 @@ const isComplete = (metricsById, frameworkId, labels) => {
 
 const rank = (frameworks, level, field) => {
   const sorted = [...frameworks].sort(
-    (a, b) => b.levels[level].total_requests_per_s - a.levels[level].total_requests_per_s
+    (a, b) =>
+      b.levels[level].total_requests_per_s -
+      a.levels[level].total_requests_per_s,
   );
   sorted.forEach((framework, index) => {
     framework[field][level] = index + 1;
@@ -88,7 +101,10 @@ const rank = (frameworks, level, field) => {
 export const loadBenchmark = async () => {
   const raw = await fetchDataset();
 
-  const labels = [...new Set(raw.metrics.map((m) => m.label))];
+  const displayedLabels = new Set(METRICS.map((metric) => metric.key));
+  const labels = [...new Set(raw.metrics.map((m) => m.label))].filter((label) =>
+    displayedLabels.has(label),
+  );
   const metricsById = new Map();
   for (const metric of raw.metrics) {
     let byLabel = metricsById.get(metric.framework_id);
@@ -119,7 +135,7 @@ export const loadBenchmark = async () => {
     const levels = {};
     for (const level of CONCURRENCIES) {
       levels[level] = Object.fromEntries(
-        labels.map((label) => [label, byLabel.get(label).get(level)])
+        labels.map((label) => [label, byLabel.get(label).get(level)]),
       );
     }
 
@@ -149,7 +165,9 @@ export const loadBenchmark = async () => {
   const byThroughput = (a, b) =>
     b.levels[64].total_requests_per_s - a.levels[64].total_requests_per_s;
   frameworks.sort(byThroughput);
-  const languageList = [...languages.values()].filter((l) => l.frameworks.length);
+  const languageList = [...languages.values()].filter(
+    (l) => l.frameworks.length,
+  );
   for (const language of languageList) language.frameworks.sort(byThroughput);
   languageList.sort((a, b) => a.label.localeCompare(b.label));
 

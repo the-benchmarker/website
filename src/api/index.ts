@@ -1,4 +1,5 @@
 import camelcaseKeys from "camelcase-keys";
+import { COMPARED_METRICS, CONCURRENCIES } from "../common/data";
 
 interface BenchmarkData {
   data: Benchmark[];
@@ -117,41 +118,37 @@ export const getBenchmarkData = async (
     deep: true,
   });
 
-  // Filter out frameworks with incomplete metrics
-  const requiredLevels: Metric["level"][] = [64, 256, 512];
-  const requiredLabels = Array.from(new Set(data.metrics.map((m) => m.label)));
-  const frameworkMaps = new Map<number, Map<string, Set<Metric["level"]>>>();
-  for (const m of data.metrics) {
-    let labelMap = frameworkMaps.get(m.frameworkId);
-    if (!labelMap) frameworkMaps.set(m.frameworkId, (labelMap = new Map()));
-    let levels = labelMap.get(String(m.label));
-    if (!levels) labelMap.set(String(m.label), (levels = new Set()));
-    levels.add(m.level);
-  }
-  data.frameworks = data.frameworks.filter((fw) => {
-    const labelMap = frameworkMaps.get(fw.id);
-    if (!labelMap) return false;
-    return requiredLabels.every((label) => {
-      const levels = labelMap.get(String(label));
-      if (!levels) return false;
-      return requiredLevels.every((lvl) => levels.has(lvl));
-    });
+  const benchmarks: Benchmark[] = data.frameworks.map((f) => {
+    const metrics = data.metrics.filter((m) => m.frameworkId === f.id);
+    return {
+      id: f.id,
+      framework: f,
+      language: data.languages.find((l) => l.label === f.language)!,
+      level64: metricsToObject(metrics, 64),
+      level256: metricsToObject(metrics, 256),
+      level512: metricsToObject(metrics, 512),
+    };
   });
+
+  const requiredLabels = COMPARED_METRICS.map(({ key }) => key).filter(
+    (label) =>
+      benchmarks.some((benchmark) =>
+        CONCURRENCIES.some((concurrency) =>
+          Number.isFinite(benchmark[`level${concurrency}`][label]),
+        ),
+      ),
+  );
 
   return {
     updatedAt: data.updatedAt,
     hardware: data.hardware,
-    data: data.frameworks.map((f) => {
-      const metrics = data.metrics.filter((m) => m.frameworkId === f.id);
-      return {
-        id: f.id,
-        framework: f,
-        language: data.languages.find((l) => l.label === f.language)!,
-        level64: metricsToObject(metrics, 64),
-        level256: metricsToObject(metrics, 256),
-        level512: metricsToObject(metrics, 512),
-      };
-    }),
+    data: benchmarks.filter((benchmark) =>
+      requiredLabels.every((label) =>
+        CONCURRENCIES.every((concurrency) =>
+          Number.isFinite(benchmark[`level${concurrency}`][label]),
+        ),
+      ),
+    ),
   };
 };
 
