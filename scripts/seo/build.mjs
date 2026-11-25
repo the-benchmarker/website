@@ -65,7 +65,16 @@ const BADGE_LABEL = "web frameworks benchmark";
 // README badges with the same ranks as the summary, overall and in the language.
 const badges = (framework) => {
   const level = CONCURRENCIES[0];
+  const spec = framework.specs
+    ? [
+        {
+          file: "badge-spec.svg",
+          message: `#${framework.specRank[level]} of ${framework.specCount} on ${framework.specs}`,
+        },
+      ]
+    : [];
   return [
+    ...spec,
     {
       file: "badge.svg",
       message: `#${framework.rank[level]} of ${framework.totalCount}`,
@@ -602,6 +611,8 @@ const dataJson = (benchmark) =>
       url: absolute(framework.path),
       rank: framework.rank,
       languageRank: framework.languageRank,
+      specs: framework.specs,
+      specRank: framework.specRank,
       levels: framework.levels,
     })),
   });

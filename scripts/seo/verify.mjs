@@ -137,6 +137,13 @@ for (const framework of data.frameworks) {
     "badge.svg": `#${framework.rank[level]} of ${data.frameworks.length}`,
     "badge-language.svg": `#${framework.languageRank[level]} of ${peers.length} in ${framework.language}`,
   };
+  if (framework.specs) {
+    const specPeers = data.frameworks.filter(
+      (f) => f.specs === framework.specs,
+    );
+    badges["badge-spec.svg"] =
+      `#${framework.specRank[level]} of ${specPeers.length} on ${framework.specs}`;
+  }
   const html = await read(`${dir}index.html`);
   for (const [file, message] of Object.entries(badges)) {
     const svg = await read(`${dir}${file}`);

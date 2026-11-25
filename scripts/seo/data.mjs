@@ -150,12 +150,26 @@ export const loadBenchmark = async () => {
       levels,
       rank: {},
       languageRank: {},
+      // v1 and v2 run different workloads, so each spec also has its own ranking
+      specs: entry.specs,
+      specRank: {},
     };
     frameworks.push(framework);
     language.frameworks.push(framework);
   }
 
+  const bySpec = new Map();
+  for (const framework of frameworks) {
+    if (!framework.specs) continue;
+    if (!bySpec.has(framework.specs)) bySpec.set(framework.specs, []);
+    bySpec.get(framework.specs).push(framework);
+  }
+  for (const group of bySpec.values()) {
+    for (const framework of group) framework.specCount = group.length;
+  }
+
   for (const level of CONCURRENCIES) {
+    for (const group of bySpec.values()) rank(group, level, "specRank");
     rank(frameworks, level, "rank");
     for (const language of languages.values()) {
       rank(language.frameworks, level, "languageRank");
