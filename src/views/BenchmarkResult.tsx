@@ -100,10 +100,40 @@ function BenchmarkResult({ benchmarks }: Props) {
     parseAsArrayOf(parseAsString).withDefault([]),
   );
   const [metricParam, setMetricParam] = useQueryState("metric");
+  const [specParam, setSpecParam] = useQueryState("spec");
   const [sortParams, setSortParams] = useQueryStates({
     asc: parseAsBoolean.withDefault(false),
     orderBy: parseAsString.withDefault("level64"),
   });
+
+  // v1 and v2 entries run different workloads, so they are not ranked together
+  const specOptions = useMemo(() => {
+    const specs = [
+      ...new Set(benchmarks.map((b) => b.framework.specs ?? "")),
+    ].filter(Boolean);
+    return [
+      { value: "all", label: "All specs" },
+      ...specs
+        .sort((a, b) => b.localeCompare(a))
+        .map((s) => ({ value: s, label: s })),
+    ];
+  }, [benchmarks]);
+
+  const hasSpecs = specOptions.length > 2;
+
+  const spec = useMemo(() => {
+    const fallback = specOptions.some((o) => o.value === "v2") ? "v2" : "all";
+    const value = hasSpecs ? specParam || fallback : "all";
+    return specOptions.find((o) => o.value === value) || specOptions[0];
+  }, [specOptions, specParam, hasSpecs]);
+
+  const specBenchmarks = useMemo(
+    () =>
+      spec.value === "all"
+        ? benchmarks
+        : benchmarks.filter((b) => b.framework.specs === spec.value),
+    [benchmarks, spec],
+  );
 
   const languageOptions = useMemo(
     () =>
@@ -175,18 +205,18 @@ function BenchmarkResult({ benchmarks }: Props) {
 
   const tableData = useMemo(() => {
     if (!frameworks.length && !languages.length) {
-      return benchmarks;
+      return specBenchmarks;
     }
 
     const languageValues = new Set(languages.map((l) => l.value));
     const frameworkValues = new Set(frameworks.map((f) => f.value));
 
-    return benchmarks.filter(
+    return specBenchmarks.filter(
       (b) =>
         languageValues.has(b.language.label) ||
         frameworkValues.has(b.framework.label),
     );
-  }, [benchmarks, frameworks, languages]);
+  }, [specBenchmarks, frameworks, languages]);
 
   const scrollToTitle = () => {
     document.getElementById("results-title")?.scrollIntoView();
@@ -202,6 +232,10 @@ function BenchmarkResult({ benchmarks }: Props) {
     setFrameworkParams(
       options.length ? options.map((f) => String(f.value)) : [],
     );
+  };
+
+  const onSpecChange = (option: SelectOption | null) => {
+    setSpecParam(option?.value.toString() || "");
   };
 
   const onMetricChange = (option: SelectOption | null) => {
@@ -258,7 +292,21 @@ function BenchmarkResult({ benchmarks }: Props) {
             </button>
           )}
         </div>
-        <div className="benchmark-filter-grid">
+        <div className={`benchmark-filter-grid${hasSpecs ? " has-spec" : ""}`}>
+          {hasSpecs && (
+            <div className="benchmark-field">
+              <label htmlFor="result-spec">Spec</label>
+              <Select
+                inputId="result-spec"
+                instanceId="result-spec"
+                onChange={onSpecChange}
+                value={spec}
+                options={specOptions}
+                isSearchable={false}
+                classNamePrefix="select"
+              />
+            </div>
+          )}
           <div className="benchmark-field">
             <label htmlFor="result-languages">Language</label>
             <Select
@@ -301,6 +349,8 @@ function BenchmarkResult({ benchmarks }: Props) {
         <p className="benchmark-filter-help">
           Select a language or framework to narrow the results. Click a column
           heading to sort.
+          {hasSpecs &&
+            " v1 and v2 entries run different workloads, so each spec has its own ranking."}
         </p>
       </section>
 
@@ -320,7 +370,7 @@ function BenchmarkResult({ benchmarks }: Props) {
           <div>
             <h2>{metric.label}</h2>
             <p aria-live="polite">
-              {tableData.length} of {benchmarks.length} frameworks ·{" "}
+              {tableData.length} of {specBenchmarks.length} frameworks ·{" "}
               {isThroughput ? "requests per second" : "milliseconds (ms)"}
             </p>
           </div>

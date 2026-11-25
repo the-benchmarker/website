@@ -44,6 +44,8 @@ interface Framework {
   version: number | string;
   language: string;
   website: string;
+  // the spec the framework runs, v1 or v2; missing in data exported before it was written
+  specs?: string;
 }
 
 interface Language {
