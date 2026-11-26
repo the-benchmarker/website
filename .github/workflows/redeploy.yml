@@ -1,0 +1,24 @@
+name: Redeploy
+
+# The /frameworks/* pages and the badges are built from data.min.json at build time,
+# so the site is built again every day to follow new results.
+on:
+  schedule:
+    - cron: "30 6 * * *"
+  workflow_dispatch:
+  repository_dispatch:
+    types: [data-updated]
+
+jobs:
+  redeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call the Vercel deploy hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "VERCEL_DEPLOY_HOOK is not set, nothing to do"
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK"
